@@ -29,7 +29,7 @@ class AppThemeData {
   static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
 
   static ThemeData lightThemeData =
-  themeData(lightColorScheme, _lightFocusColor);
+      themeData(lightColorScheme, _lightFocusColor);
   static ThemeData darkThemeData = themeData(darkColorScheme, _darkFocusColor);
 
   static ThemeData themeData(ColorScheme colorScheme, Color focusColor) {
@@ -88,6 +88,12 @@ class AppThemeData {
     brightness: Brightness.dark,
   );
 
+  static const baseGradient = RadialGradient(
+    colors: [
+      Color(0xFFD9B5FF),
+      Color(0xFFA455F8),
+    ],
+  );
   static const _regular = FontWeight.w400;
   static const _medium = FontWeight.w500;
   static const _semiBold = FontWeight.w600;
@@ -104,5 +110,22 @@ class AppThemeData {
     bodyMedium: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 16.0),
     titleLarge: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 16.0),
     labelLarge: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 14.0),
+  );
+
+  static final TextStyle titleStyle = GoogleFonts.sourceSans3(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
+
+  static final TextStyle subtitleStyle = GoogleFonts.sourceSans3(
+    fontSize: 14,
+    color: Colors.white,
+  );
+
+  static final TextStyle buttonTextStyle = GoogleFonts.sourceSans3(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: Color(0xFF9B5DF7),
   );
 }

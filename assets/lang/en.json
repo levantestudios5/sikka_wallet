@@ -12,6 +12,10 @@
   "home_tv_error": "Error",
   "home_tv_no_post_found": "No posts found",
   "home_tv_choose_language": "Choose Language",
-  "home_end": "-------------------------------------------------------------------------------------"
+  "home_end": "-------------------------------------------------------------------------------------",
+  "app_name": "SikkaX",
+  "splash_subtitle": "Play and earn SikkaX Coins and fill your wallet with crypto!",
+  "get_started": "Get Started",
+  "splash_end": "-------------------------------------------------------------------------------------"
 
 }
