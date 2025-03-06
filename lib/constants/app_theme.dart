@@ -135,4 +135,13 @@ class AppThemeData {
     color: Colors.deepPurple,
     fontWeight: FontWeight.bold,
   );
+
+  static const Color primaryColor = Color(0xFF8A2BE2);
+  static const Color secondaryColor = Color(0xFF9B30FF);
+  static const Color buttonColor = Color(0xFF6200EE);
+  static const TextStyle headline1 = TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
+  static const TextStyle bodyText = TextStyle(fontSize: 16, color: Colors.black54);
+  static const TextStyle buttonText = TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white);
+  static const TextStyle linkText = TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue);
+
 }

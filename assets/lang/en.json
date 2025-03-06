@@ -31,5 +31,18 @@
   "register": "Register",
   "already_have_account": "Already have an account?",
   "login_here": "Login Here",
-  "signup_end": "-------------------------------------------------------------------------------------"
+  "signup_end": "-------------------------------------------------------------------------------------",
+
+  "login_here": "Login",
+  "login_subtitle": "Login with the details you entered in the game you played",
+  "email": "Email Address",
+  "password": "Password",
+  "not_have_account": "Don't have an account?",
+  "login_button": "Login",
+  "register_now": "Register Now",
+  "error_empty_email": "Please enter your email",
+  "error_invalid_email": "Enter a valid email address",
+  "error_empty_password": "Please enter your password",
+  "error_short_password": "Password must be at least 6 characters",
+  "signin_end": "-------------------------------------------------------------------------------------"
 }
