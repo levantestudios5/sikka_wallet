@@ -16,6 +16,20 @@
   "app_name": "SikkaX",
   "splash_subtitle": "Play and earn SikkaX Coins and fill your wallet with crypto!",
   "get_started": "Get Started",
-  "splash_end": "-------------------------------------------------------------------------------------"
+  "splash_end": "-------------------------------------------------------------------------------------",
 
+  "signup_title": "Sign Up",
+  "signup_subtitle": "Fill in the details to register",
+  "full_name": "Full Name",
+  "name_error": "Please enter your name",
+  "email_address": "Email Address",
+  "email_error_empty": "Please enter an email",
+  "email_error_invalid": "Enter a valid email",
+  "password": "Password",
+  "password_error": "Password must be at least 6 characters",
+  "country": "Country",
+  "register": "Register",
+  "already_have_account": "Already have an account?",
+  "login_here": "Login Here",
+  "signup_end": "-------------------------------------------------------------------------------------"
 }

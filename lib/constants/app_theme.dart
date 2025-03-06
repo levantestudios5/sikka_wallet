@@ -128,4 +128,11 @@ class AppThemeData {
     fontWeight: FontWeight.w600,
     color: Color(0xFF9B5DF7),
   );
+
+
+  static final TextStyle linkTextStyle = GoogleFonts.sourceSans3(
+    fontSize: 14,
+    color: Colors.deepPurple,
+    fontWeight: FontWeight.bold,
+  );
 }
