@@ -1,0 +1,32 @@
+[
+  {
+    "rank": 1,
+    "name": "Sheikh Daniyal",
+    "points": "2M Points",
+    "badge": "gold"
+  },
+  {
+    "rank": 2,
+    "name": "Umair Mustafa",
+    "points": "1.5M Points",
+    "badge": "silver"
+  },
+  {
+    "rank": 3,
+    "name": "Ali Jafri",
+    "points": "1M Points",
+    "badge": "bronze"
+  },
+  {
+    "rank": 4,
+    "name": "Shahab Afzal",
+    "points": "1M Points",
+    "badge": "yellow"
+  },
+  {
+    "rank": 5,
+    "name": "Usama Khan",
+    "points": "1M Points",
+    "badge": "pink"
+  }
+]

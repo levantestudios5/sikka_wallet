@@ -40,4 +40,14 @@ class Dimens {
   // notification screen
   static const double radiusLarge = 20.0;
   static const double elevationLow = 3.0;
+// ranks screen
+
+  static const double borderRadius = 12.0;
+  static const double avatarSize = 24.0;
+  static const double fontSizeSmall = 14.0;
+  static const double defaultFontSize = 12.0;
+  static const double fontSizeMedium = 16.0;
+  static const double fontSizeLarge = 18.0;
+  static const double defaultLogoSize = 30.0;
+
 }

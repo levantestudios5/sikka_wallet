@@ -89,6 +89,21 @@ class AppThemeData {
     brightness: Brightness.dark,
   );
 
+  static const rankingGradient = RadialGradient(
+    colors: [
+      Color(0xFF6700D6),
+      Color(0xFF360070),
+    ],
+  );
+
+  static const referFriendGradient = LinearGradient(
+    colors: [
+      Color(0xFFEF8F00),
+      Color(0xFFEEAA0B),
+      Color(0xFFEFB529),
+    ],
+  );
+
   static const baseGradient = RadialGradient(
     colors: [
       Color(0xFFD9B5FF),
@@ -99,6 +114,19 @@ class AppThemeData {
   static const _medium = FontWeight.w500;
   static const _semiBold = FontWeight.w600;
   static const _bold = FontWeight.w700;
+
+  static const Color primaryColor = Color(0xFF8A2BE2);
+  static const Color backgroundColor = Colors.white;
+  static const Color textColor = Colors.black;
+  static const Color greyText = Colors.grey;
+  static const Color secondaryColor = Color(0xFF9B30FF);
+  static const Color exchangeColor = Colors.purple;
+  static const Color withdrawalColor = Colors.green;
+  static const Color buttonColor = Color(0xFF6200EE);
+  static const TextStyle buttonText =
+      TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white);
+  static const TextStyle linkText =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue);
 
   static final TextTheme _textTheme = TextTheme(
     headlineMedium: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
@@ -130,22 +158,11 @@ class AppThemeData {
     color: Color(0xFF9B5DF7),
   );
 
-
   static final TextStyle linkTextStyle = GoogleFonts.sourceSans3(
     fontSize: 14,
     color: Colors.deepPurple,
     fontWeight: FontWeight.bold,
   );
-
-  static const Color primaryColor = Color(0xFF8A2BE2);
-  static const Color secondaryColor = Color(0xFF9B30FF);
-  static const Color exchangeColor = Colors.purple;
-  static const Color withdrawalColor = Colors.green;
-  static const Color buttonColor = Color(0xFF6200EE);
-  static const TextStyle buttonText = TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white);
-  static const TextStyle linkText = TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue);
-
-
 
   static const TextStyle headline1 = TextStyle(
     fontSize: Dimens.appBarFontSize,
@@ -183,12 +200,9 @@ class AppThemeData {
     ),
   );
 
-
-
   static const TextStyle dateStyle = TextStyle(
     color: Colors.black87,
-     fontSize: Dimens.spacingMedium,
-
+    fontSize: Dimens.spacingMedium,
     fontWeight: FontWeight.w300,
   );
 
@@ -196,7 +210,4 @@ class AppThemeData {
     fontSize: Dimens.bodyFontSize,
     fontWeight: FontWeight.bold,
   );
-
-
-
 }
