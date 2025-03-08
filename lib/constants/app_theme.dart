@@ -20,6 +20,7 @@
 /// `import 'path/to/setting.dart';`
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sikka_wallet/constants/dimens.dart';
 
 class AppThemeData {
   static const _lightFillColor = Colors.black;
@@ -138,10 +139,64 @@ class AppThemeData {
 
   static const Color primaryColor = Color(0xFF8A2BE2);
   static const Color secondaryColor = Color(0xFF9B30FF);
+  static const Color exchangeColor = Colors.purple;
+  static const Color withdrawalColor = Colors.green;
   static const Color buttonColor = Color(0xFF6200EE);
-  static const TextStyle headline1 = TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
-  static const TextStyle bodyText = TextStyle(fontSize: 16, color: Colors.black54);
   static const TextStyle buttonText = TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white);
   static const TextStyle linkText = TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue);
+
+
+
+  static const TextStyle headline1 = TextStyle(
+    fontSize: Dimens.appBarFontSize,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
+
+  static const TextStyle headline2 = TextStyle(
+    fontSize: Dimens.titleFontSize,
+    fontWeight: FontWeight.bold,
+    color: Colors.black,
+  );
+
+  static const TextStyle bodyText = TextStyle(
+    fontSize: Dimens.bodyFontSize,
+    color: Colors.grey,
+  );
+
+  static const TextStyle subtitle1 = TextStyle(
+    fontSize: Dimens.bodyFontSize,
+    fontWeight: FontWeight.bold,
+    color: Colors.grey,
+  );
+
+  static final ThemeData lightTheme = ThemeData(
+    scaffoldBackgroundColor: Colors.grey[100],
+    appBarTheme: AppBarTheme(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      titleTextStyle: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+        fontSize: Dimens.paddingLarge,
+      ),
+    ),
+  );
+
+
+
+  static const TextStyle dateStyle = TextStyle(
+    color: Colors.black87,
+     fontSize: Dimens.spacingMedium,
+
+    fontWeight: FontWeight.w300,
+  );
+
+  static const TextStyle messageStyle = TextStyle(
+    fontSize: Dimens.bodyFontSize,
+    fontWeight: FontWeight.bold,
+  );
+
+
 
 }
