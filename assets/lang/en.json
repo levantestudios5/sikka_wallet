@@ -64,5 +64,12 @@
   "available": "Available",
   "launch_message": "Our SikkaX Coin is launching in July 2026. If you keep hold on our SikkaX Coin, you can withdraw this next July when it’s released.",
   "exchange_button": "Exchange to SHIB",
-  "exchange_end": "-------------------------------------------------------------------------------------"
+  "exchange_end": "-------------------------------------------------------------------------------------",
+  "withdraw_info": "Our SikkaX Coin is launching in July 2026. If you keep hold on our SikkaX Coin, you can withdraw this next July when it’s released.",
+  "withdrawal_details": "Withdrawal Details",
+  "withdrawal_description": "Fill the details of your wallet for withdrawal of coins",
+  "wallet_no": "Wallet No",
+  "withdrawal_pending": "Withdrawal Pending",
+  "withdrawal_message": "We’ve sent a confirmation email to ",
+  "withdraw_end": "-------------------------------------------------------------------------------------"
 }

@@ -66,8 +66,14 @@ class Dimens {
   static const double borderRadiusLarge = 20.0;
   static const double borderWidth = 2.0;
   // Exchange screen
-
   static const double buttonHeightLarge = 50.0;
   static const double iconSize = 24.0;
   static const double textSizeLarge = 24.0;
+  // withdraw screen
+  static const double padding = 16.0;
+  static const double titleSize = 20.0;
+  static const double textSize = 14.0;
+  static const double buttonTextSize = 16.0;
+  static const double dialogRadius = 20.0;
+
 }

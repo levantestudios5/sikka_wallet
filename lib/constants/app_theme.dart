@@ -116,6 +116,8 @@ class AppThemeData {
   static const _bold = FontWeight.w700;
 
   static const Color primaryColor = Color(0xFF8A2BE2);
+  static const Color primaryDarkColor = Color(0xFF6700D6);
+
   static const Color backgroundColor = Colors.white;
   static const Color textColor = Colors.black;
   static const Color greyText = Colors.grey;

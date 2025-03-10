@@ -9,15 +9,15 @@
   },
   {
     "id": 2,
-    "icon": "assets/icons/ic_appicon.png",
-    "balance": "BTC 0.045",
-    "description": "Available Bitcoin",
+    "icon": "assets/icons/shiba.png",
+    "balance": "SHIBA 0.045",
+    "description": "Available Shiba Inu",
     "buttonText": "Exchange",
     "buttonIcon": "exchange_icon"
   },
   {
     "id": 3,
-    "icon": "assets/icons/ic_appicon.png",
+    "icon": "assets/icons/shiba.png",
     "balance": "ETH 1.20",
     "description": "Available Ethereum",
     "buttonText": "Exchange",
