@@ -48,16 +48,20 @@ class _RanksScreenState extends State<RanksScreen> {
               child: Column(
                 children: [
                   _buildTopRanks(),
-                  SizedBox(height: Dimens.paddingLarge),
+                  SizedBox(height: Dimens.paddingSmall),
                   _buildReferralCard(),
-                  SizedBox(height: Dimens.paddingLarge),
+                  SizedBox(height: Dimens.paddingSmall),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                    child: Text("Your ranking depends on how many games you played and how many points you earned in each game",style: TextStyle(
-                      color: Colors.black87, fontSize: Dimens.fontSizeSmall,)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: Dimens.paddingMedium),
+                    child: Text(
+                        "Your ranking depends on how many games you played and how many points you earned in each game",
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: Dimens.fontSizeMedium,
+                        )),
                   ),
-                  SizedBox(height: Dimens.paddingLarge),
-
+                  SizedBox(height: Dimens.paddingSmall),
                   _buildRankList(),
                 ],
               ),
@@ -190,14 +194,12 @@ class _RanksScreenState extends State<RanksScreen> {
 
   Widget _buildRankList() {
     return Column(
-      children:
-      _ranksData.map((rank) => _buildRankTile(rank)).toList()
-    );
+        children: _ranksData.map((rank) => _buildRankTile(rank)).toList());
   }
 
   Widget _buildRankTile(Map<String, dynamic> rank) {
     return Card(
-      elevation: 2,
+      elevation: 1,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Dimens.borderRadius)),
       child: ListTile(

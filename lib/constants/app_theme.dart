@@ -98,8 +98,8 @@ class AppThemeData {
 
   static const referFriendGradient = LinearGradient(
     colors: [
-      Color(0xFFEF8F00),
-      Color(0xFFEEAA0B),
+      Color(0xFFF19408),
+      Color(0xFFE5A30A),
       Color(0xFFEFB529),
     ],
   );
