@@ -1,136 +1,249 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:sikka_wallet/constants/assets.dart';
+import 'package:flutter/services.dart';
+import 'package:sikka_wallet/constants/app_theme.dart';
+import 'package:sikka_wallet/constants/dimens.dart';
+import 'package:sikka_wallet/core/widgets/custom_circular_button.dart';
+import 'package:sikka_wallet/utils/locale/app_localization.dart';
 
-class WalletScreen extends StatelessWidget {
+class WalletScreen extends StatefulWidget {
+  @override
+  _WalletScreenState createState() => _WalletScreenState();
+}
+
+class _WalletScreenState extends State<WalletScreen> {
+  List<dynamic> _transactions = [];
+  List<dynamic> _walletCards = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTransactions();
+    _loadWalletCards();
+  }
+
+  Future<void> _loadTransactions() async {
+    final String response =
+        await rootBundle.loadString('assets/json/notifications.json');
+    final List<dynamic> data = json.decode(response);
+    setState(() {
+      _transactions = data;
+    });
+  }
+
+  Future<void> _loadWalletCards() async {
+    final String response =
+        await rootBundle.loadString('assets/json/wallet_card.json');
+    final List<dynamic> data = json.decode(response);
+    setState(() {
+      _walletCards = data;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      bottomNavigationBar: _buildBottomNavBar(),
-      body: Column(
+      backgroundColor: AppThemeData.primaryColor,
+      appBar: AppBar(
+        title: Text(
+          AppLocalizations.of(context).translate('wallet'),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: Dimens.fontLarge),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.purple.shade100, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(Dimens.cornerRadiusLarge),
+            topRight: Radius.circular(Dimens.cornerRadiusLarge),
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(Dimens.paddingMedium),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildWalletCard(),
+              SizedBox(height: Dimens.spacingLarge),
+              _buildAnnouncement(),
+              SizedBox(height: Dimens.spacingLarge),
+              _buildTransactionList(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWalletCard() {
+    return SizedBox(
+      height: 400, // Set height for horizontal scrolling
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _walletCards.length,
+        itemBuilder: (context, index) {
+          final item = _walletCards[index];
+          return _buildWalletItemCard(item);
+        },
+      ),
+    );
+  }
+
+  Widget _buildWalletItemCard(Map<String, dynamic> item) {
+    return Container(
+      width: 300,
+      margin: EdgeInsets.symmetric(horizontal: Dimens.spacingMedium),
+      padding: EdgeInsets.all(Dimens.paddingLarge),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(Dimens.cornerRadiusLarge),
+        gradient: LinearGradient(
+          colors: [Colors.purple.shade50, Colors.white60],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildAppBar(),
-          _buildBalanceCard(),
-          _buildAnnouncementBanner(),
-          _buildExchangeHistory(),
+          Image.asset(item['icon'], width: Dimens.coinSize),
+          SizedBox(height: Dimens.spacingMedium),
+          Text(item['balance'],
+              style: TextStyle(
+                  fontSize: Dimens.fontExtraLarge,
+                  fontWeight: FontWeight.bold)),
+          SizedBox(height: Dimens.spacingSmall),
+          Text(item['description'], style: TextStyle(color: Colors.grey)),
+          SizedBox(height: Dimens.spacingMedium),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              item['balance'].toString().contains('SIKX')
+                  ? SizedBox()
+                  : CircularButtonWithLabel(
+                      backgroundColor: Colors.transparent,
+                      label: 'withdraw',
+                      icon: Icons
+                          .keyboard_arrow_down_rounded, // Change to your desired icon
+                      onPressed: () {
+                        // Button action
+                      },
+                    ),
+              item['balance'].toString().contains('SIKX')
+                  ? SizedBox()
+                  : SizedBox(width: Dimens.radiusMedium),
+              CircularButtonWithLabel(
+                backgroundColor: Colors.transparent,
+
+                label: 'exchange',
+                icon: Icons.swap_horiz_outlined, // Change to your desired icon
+                onPressed: () {
+                  // Button action
+                },
+              ),
+            ],
+          )
         ],
       ),
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAnnouncement() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+      padding: EdgeInsets.all(Dimens.paddingMedium),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF7D26DE), Color(0xFFEDE0F9)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        color: Colors.purple.shade50,
+        borderRadius: BorderRadius.circular(Dimens.cornerRadiusMedium),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Wallet", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-          Row(
-            children: [
-              Icon(Icons.notifications, color: Colors.white, size: 28),
-              SizedBox(width: 15),
-              Icon(Icons.person, color: Colors.white, size: 28),
-            ],
+          Icon(Icons.announcement_outlined, color: Colors.purple),
+          SizedBox(width: Dimens.spacingSmall),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context).translate('announcement_text'),
+              style: TextStyle(
+                  color: Colors.purple.shade800, fontSize: Dimens.fontSmall),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBalanceCard() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, spreadRadius: 2)],
+  Widget _buildTransactionList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(
+            AppLocalizations.of(context).translate('transactions'),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: Dimens.fontMedium),
+          ),
         ),
-        child: Column(
-          children: [
-            Image.asset(Assets.appLogo, height: 50), // Use your coin image
-            SizedBox(height: 10),
-            Text("SKX 0.00", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            SizedBox(height: 5),
-            Text("Available SikkaX Coins", style: TextStyle(fontSize: 16, color: Colors.grey)),
-            SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {},
-              icon: Icon(Icons.swap_horiz, color: Color(0xFF7D26DE)),
-              label: Text("Exchange Coins"),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Color(0xFF7D26DE),
-                backgroundColor: Colors.white,
-                side: BorderSide(color: Color(0xFF7D26DE)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        _transactions.isEmpty
+            ? Padding(
+                padding: EdgeInsets.symmetric(vertical: Dimens.spacingMedium),
+                child: Text(
+                    AppLocalizations.of(context).translate('no_transactions')),
+              )
+            : ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: _transactions.length,
+                itemBuilder: (context, index) {
+                  return _buildTransactionCard(_transactions[index]);
+                },
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAnnouncementBanner() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Color(0xFFEDE0F9),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.campaign, color: Color(0xFF7D26DE)),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                "📢 Our SikkaX Coin is launching soon! In next July, 2026 we are launching SikkaX publicly.",
-                style: TextStyle(fontSize: 14, color: Color(0xFF7D26DE)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExchangeHistory() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Exchange History", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 5),
-          Text("You did not make any coins exchange yet", style: TextStyle(fontSize: 14, color: Colors.grey)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      selectedItemColor: Color(0xFF7D26DE),
-      unselectedItemColor: Colors.grey,
-      currentIndex: 2,
-      items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-        BottomNavigationBarItem(icon: Icon(Icons.sports_esports), label: "Games"),
-        BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: "Wallet"),
-        BottomNavigationBarItem(icon: Icon(Icons.star), label: "Ranks"),
-        BottomNavigationBarItem(icon: Icon(Icons.article), label: "Feed"),
       ],
+    );
+  }
+
+  Widget _buildTransactionCard(Map<String, dynamic> item) {
+    bool isExchange = item['type'] == 'EXCHANGE';
+    return Card(
+      elevation: 1,
+      child: Padding(
+        padding: EdgeInsets.all(Dimens.spacingMedium),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(item['date'], style: AppThemeData.dateStyle),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.inputRadius,
+                      vertical: Dimens.cardElevation),
+                  decoration: BoxDecoration(
+                    color: isExchange
+                        ? AppThemeData.exchangeColor
+                        : AppThemeData.withdrawalColor,
+                    borderRadius: BorderRadius.circular(Dimens.spacingLarge),
+                  ),
+                  child: Text(
+                    item['type'],
+                    style: AppThemeData.subtitleStyle
+                        .copyWith(fontSize: Dimens.spacingMedium),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: Dimens.paddingSmall),
+            Text(item['message'], style: AppThemeData.messageStyle),
+          ],
+        ),
+      ),
     );
   }
 }

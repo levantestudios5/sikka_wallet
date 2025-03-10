@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "icon": "assets/icons/ic_appicon.png",
+    "balance": "SIKX 0.00",
+    "description": "Available SikkaX Coins",
+    "buttonText": "Exchange",
+    "buttonIcon": "exchange_icon"
+  },
+  {
+    "id": 2,
+    "icon": "assets/icons/ic_appicon.png",
+    "balance": "BTC 0.045",
+    "description": "Available Bitcoin",
+    "buttonText": "Exchange",
+    "buttonIcon": "exchange_icon"
+  },
+  {
+    "id": 3,
+    "icon": "assets/icons/ic_appicon.png",
+    "balance": "ETH 1.20",
+    "description": "Available Ethereum",
+    "buttonText": "Exchange",
+    "buttonIcon": "exchange_icon"
+  }
+]

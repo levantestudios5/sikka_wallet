@@ -53,12 +53,13 @@ class _RanksScreenState extends State<RanksScreen> {
                   SizedBox(height: Dimens.paddingSmall),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: Dimens.paddingMedium),
+                        horizontal: Dimens.paddingSmall),
                     child: Text(
                         "Your ranking depends on how many games you played and how many points you earned in each game",
                         style: TextStyle(
                           color: Colors.black87,
                           fontSize: Dimens.fontSizeMedium,
+                          fontWeight: FontWeight.w500
                         )),
                   ),
                   SizedBox(height: Dimens.paddingSmall),

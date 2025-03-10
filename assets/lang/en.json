@@ -44,5 +44,25 @@
   "error_invalid_email": "Enter a valid email address",
   "error_empty_password": "Please enter your password",
   "error_short_password": "Password must be at least 6 characters",
-  "signin_end": "-------------------------------------------------------------------------------------"
+  "signin_end": "-------------------------------------------------------------------------------------",
+
+  "wallet": "Wallet",
+  "available_coins": "Available SikkaX Coins",
+  "exchange": "Exchange",
+  "withdraw": "Withdraw",
+  "announcement_text": "Our SikkaX Coin is launching soon! In next July, 2026 we are launching SikkaX publicly.",
+  "transactions": "Transactions",
+  "no_transactions": "You did not make any transactions yet",
+  "buttonText": "Exchange",
+  "wallet_end": "-------------------------------------------------------------------------------------",
+
+  "exchange_sikx_to_shib": "Exchange SIKX to SHIB",
+  "exchange_economy": "Exchange Economy",
+  "exchange_details": "You require minimum 5K SikkaX coins for conversion. 5K SikkaX Coins will be converted to 10 Shiba Inu Coins.",
+  "sikx_coins": "SikkaX Coins",
+  "shiba_inu_coins": "Shiba Inu Coins",
+  "available": "Available",
+  "launch_message": "Our SikkaX Coin is launching in July 2026. If you keep hold on our SikkaX Coin, you can withdraw this next July when it’s released.",
+  "exchange_button": "Exchange to SHIB",
+  "exchange_end": "-------------------------------------------------------------------------------------"
 }
