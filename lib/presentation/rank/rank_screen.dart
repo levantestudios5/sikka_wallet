@@ -58,7 +58,7 @@ class _RanksScreenState extends State<RanksScreen> {
                         "Your ranking depends on how many games you played and how many points you earned in each game",
                         style: TextStyle(
                           color: Colors.black87,
-                          fontSize: Dimens.fontSizeMedium,
+                          fontSize: Dimens.fontSmall,
                           fontWeight: FontWeight.w500
                         )),
                   ),

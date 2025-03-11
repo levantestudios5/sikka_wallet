@@ -10,6 +10,8 @@ class CircularButtonWithLabel extends StatelessWidget {
   final String label;
   final Color iconColor;
   final Color backgroundColor;
+  final double size;
+
 
   const CircularButtonWithLabel({
     Key? key,
@@ -17,6 +19,7 @@ class CircularButtonWithLabel extends StatelessWidget {
     required this.onPressed,
     this.borderColor = AppThemeData.primaryColor,
     this.iconColor = AppThemeData.primaryColor,
+    this.size= Dimens.buttonCircularSize,
     this.backgroundColor = Colors.white,
     required this.label,
   }) : super(key: key);
@@ -30,19 +33,21 @@ class CircularButtonWithLabel extends StatelessWidget {
           onTap: onPressed,
           borderRadius: BorderRadius.circular(Dimens.buttonCircularSize),
           child: Container(
-            width: Dimens.buttonCircularSize,
-            height: Dimens.buttonCircularSize,
+            width: size,
+            height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: backgroundColor,
-              border: Border.all(color: borderColor, width: Dimens.borderWidth),
+              border: Border.all(color: borderColor, width: 1),
             ),
             child: Center(
               child: Icon(icon, color: iconColor, size: Dimens.defaultLogoSize),
             ),
           ),
         ),
+        label==''?SizedBox():
         SizedBox(height: Dimens.spacingSmall),
+        label==''?SizedBox():
         Text(
           AppLocalizations.of(context).translate(label),
           style: TextStyle(

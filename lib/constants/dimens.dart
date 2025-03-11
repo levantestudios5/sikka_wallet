@@ -75,5 +75,7 @@ class Dimens {
   static const double textSize = 14.0;
   static const double buttonTextSize = 16.0;
   static const double dialogRadius = 20.0;
+  static const double radius = 20.0;
+  static const double gameCardHeight = 150.0;
 
 }

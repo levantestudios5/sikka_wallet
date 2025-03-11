@@ -2,6 +2,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/strings.dart';
 import 'package:sikka_wallet/presentation/feed/news_feed_screen.dart';
+import 'package:sikka_wallet/presentation/home/bottom_nav_bar.dart';
+import 'package:sikka_wallet/presentation/home/dashboard.dart';
 import 'package:sikka_wallet/presentation/home/store/language/language_store.dart';
 import 'package:sikka_wallet/presentation/home/store/theme/theme_store.dart';
 import 'package:sikka_wallet/presentation/login/store/login_store.dart';
@@ -51,7 +53,7 @@ class MyApp extends StatelessWidget {
             // Built-in localization of basic text for Cupertino widgets
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: _userStore.isLoggedIn ? WithdrawScreen() : WithdrawScreen(),
+          home: _userStore.isLoggedIn ? BottomNavBar() : BottomNavBar(),
         );
       },
     );

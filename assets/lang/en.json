@@ -6,7 +6,6 @@
   "login_btn_sign_in": "Sign In",
   "login_error_fill_fields": "Please fill in all fields",
   "login_end": "------------------------------------------------------------------------------------",
-
   "home_start": "Below are list of strings for home",
   "home_tv_posts": "Posts",
   "home_tv_error": "Error",
@@ -17,7 +16,6 @@
   "splash_subtitle": "Play and earn SikkaX Coins and fill your wallet with crypto!",
   "get_started": "Get Started",
   "splash_end": "-------------------------------------------------------------------------------------",
-
   "signup_title": "Sign Up",
   "signup_subtitle": "Fill in the details to register",
   "full_name": "Full Name",
@@ -32,7 +30,6 @@
   "already_have_account": "Already have an account?",
   "login_here": "Login Here",
   "signup_end": "-------------------------------------------------------------------------------------",
-
   "login_here": "Login",
   "login_subtitle": "Login with the details you entered in the game you played",
   "email": "Email Address",
@@ -45,7 +42,6 @@
   "error_empty_password": "Please enter your password",
   "error_short_password": "Password must be at least 6 characters",
   "signin_end": "-------------------------------------------------------------------------------------",
-
   "wallet": "Wallet",
   "available_coins": "Available SikkaX Coins",
   "exchange": "Exchange",
@@ -54,8 +50,17 @@
   "transactions": "Transactions",
   "no_transactions": "You did not make any transactions yet",
   "buttonText": "Exchange",
+  "convert_sikka": "Convert to SikkaX Coins",
+  "see_all": "See All",
+  "popular_games": "Our Popular Games",
+  "balance": "Your Balance",
+  "sikka_points": "SikkaX Points",
+  "announcement": "\uD83D\uDCE2 Our SikkaX Coin is launching soon! In next July, 2026 we are launching SikkaX publicly.",
+  "home": "Home",
+  "games": "Games",
+  "ranks": "Ranks",
+  "feed": "Feed",
   "wallet_end": "-------------------------------------------------------------------------------------",
-
   "exchange_sikx_to_shib": "Exchange SIKX to SHIB",
   "exchange_economy": "Exchange Economy",
   "exchange_details": "You require minimum 5K SikkaX coins for conversion. 5K SikkaX Coins will be converted to 10 Shiba Inu Coins.",
