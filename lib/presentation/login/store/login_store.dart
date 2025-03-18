@@ -1,8 +1,10 @@
 import 'package:sikka_wallet/core/stores/error/error_store.dart';
 import 'package:sikka_wallet/core/stores/form/form_store.dart';
+import 'package:sikka_wallet/domain/entity/auth/authentication_response.dart';
 import 'package:sikka_wallet/domain/entity/auth/register_request.dart';
 import 'package:sikka_wallet/domain/usecase/auth/register_user_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/is_logged_in_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/user/save_auth_token_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/save_login_in_status_usecase.dart';
 import 'package:mobx/mobx.dart';
 
@@ -18,10 +20,11 @@ abstract class _UserStore with Store {
   _UserStore(
     this._isLoggedInUseCase,
     this._saveLoginStatusUseCase,
+    this._saveAuthTokenUseCase,
     this._loginUseCase,
     this.formErrorStore,
     this.errorStore,
-      this._registerUserUseCase,
+    this._registerUserUseCase,
   ) {
     // setting up disposers
     _setupDisposers();
@@ -35,6 +38,7 @@ abstract class _UserStore with Store {
   // use cases:-----------------------------------------------------------------
   final IsLoggedInUseCase _isLoggedInUseCase;
   final SaveLoginStatusUseCase _saveLoginStatusUseCase;
+  final SaveAuthTokenUseCase _saveAuthTokenUseCase;
   final LoginUseCase _loginUseCase;
   final RegisterUserUseCase _registerUserUseCase;
 
@@ -55,7 +59,7 @@ abstract class _UserStore with Store {
   }
 
   // empty responses:-----------------------------------------------------------
-  static ObservableFuture<User?> emptyLoginResponse =
+  static ObservableFuture<LoginResponse?> emptyLoginResponse =
       ObservableFuture.value(null);
   static ObservableFuture<String?> emptyRegisterResponse =
       ObservableFuture.value(null);
@@ -67,7 +71,7 @@ abstract class _UserStore with Store {
   bool success = false;
 
   @observable
-  ObservableFuture<User?> loginFuture = emptyLoginResponse;
+  ObservableFuture<LoginResponse?> loginFuture = emptyLoginResponse;
   @observable
   ObservableFuture<String?> registerFuture = emptyRegisterResponse;
 
@@ -79,7 +83,8 @@ abstract class _UserStore with Store {
 
   // actions:-------------------------------------------------------------------
   @action
-  Future<String> registerUser(String fullName, String email, String password, String inviteCode, String country) async {
+  Future<String> registerUser(String fullName, String email, String password,
+      String inviteCode, String country) async {
     final RegisterRequest registerParams = RegisterRequest(
       fullName: fullName,
       email: email,
@@ -101,17 +106,16 @@ abstract class _UserStore with Store {
     });
   }
 
-
   @action
   Future login(String email, String password) async {
     final LoginParams loginParams =
-        LoginParams(username: email, password: password);
+        LoginParams(email: email, password: password);
     final future = _loginUseCase.call(params: loginParams);
     loginFuture = ObservableFuture(future);
-
     await future.then((value) async {
       if (value != null) {
         await _saveLoginStatusUseCase.call(params: true);
+        await _saveAuthTokenUseCase.call(params: value.token);
         this.isLoggedIn = true;
         this.success = true;
       }

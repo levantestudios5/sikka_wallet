@@ -7,12 +7,10 @@ class GamesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: _buildBottomNavBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildAppBar(),
             _buildSectionTitle("Our Popular Games 🔥"),
             _buildGameGrid(),
             _buildSectionTitle("Newly Released"),
@@ -26,31 +24,6 @@ class GamesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF7D26DE), Color(0xFFEDE0F9)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("Games", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-          Row(
-            children: [
-              Icon(Icons.notifications, color: Colors.white, size: 28),
-              SizedBox(width: 15),
-              Icon(Icons.person, color: Colors.white, size: 28),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildSectionTitle(String title) {
     return Padding(

@@ -12,7 +12,9 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Color(0xFFA455F8),
       body: Stack(
         children: [
-          _buildHeader(context),
+          Align(
+              alignment: Alignment.topCenter,
+              child: _buildHeader(context)),
           Align(
               alignment: Alignment.bottomCenter,
               child: _showDraggableSheet(context)),
@@ -31,53 +33,10 @@ class HomeScreen extends StatelessWidget {
         ]),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+
         children: [
-          SizedBox(
-            height: Dimens.paddingSmall,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Image.asset(
-                    Assets.splashIcon,
-                    height: 20,
-                  ),
-                  SizedBox(width: Dimens.inputSpacing),
-                  Text(context.translate("app_name"),
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold)),
-                ],
-              ),
-              Row(children: [
-                CircularButtonWithLabel(
-                  icon: Icons.notifications_none_outlined,
-                  iconColor: Colors.white,
-                  size: 40,
-                  borderColor: Colors.white,
-                  backgroundColor: Colors.transparent,
-                  onPressed: () {
-                    _showDraggableSheet(context);
-                  },
-                  label: '',
-                ),
-                SizedBox(width: Dimens.paddingSmall),
-                CircularButtonWithLabel(
-                  icon: Icons.person_3_outlined,
-                  size: 40,
-                  iconColor: Colors.white,
-                  borderColor: Colors.white,
-                  backgroundColor: Colors.transparent,
-                  onPressed: () {},
-                  label: '',
-                ),
-              ])
-            ],
-          ),
-          SizedBox(height: Dimens.padding),
+
           Image.asset("assets/icons/ic_appicon.png", height: 126),
           Text(context.translate("balance"),
               style: TextStyle(color: Colors.white70, fontSize: 14)),

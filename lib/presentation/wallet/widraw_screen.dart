@@ -15,7 +15,7 @@ class WithdrawScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, size: Dimens.iconSize),
+          icon: Icon(Icons.arrow_back, color: Colors.black,size: Dimens.iconSize),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context).translate('withdraw'),

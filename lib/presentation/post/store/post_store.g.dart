@@ -20,13 +20,13 @@ mixin _$PostStore on _PostStore, Store {
       Atom(name: '_PostStore.fetchPostsFuture', context: context);
 
   @override
-  ObservableFuture<PostList?> get fetchPostsFuture {
+  ObservableFuture<SikkaXNewsList> get fetchPostsFuture {
     _$fetchPostsFutureAtom.reportRead();
     return super.fetchPostsFuture;
   }
 
   @override
-  set fetchPostsFuture(ObservableFuture<PostList?> value) {
+  set fetchPostsFuture(ObservableFuture<SikkaXNewsList> value) {
     _$fetchPostsFutureAtom.reportWrite(value, super.fetchPostsFuture, () {
       super.fetchPostsFuture = value;
     });
@@ -36,13 +36,13 @@ mixin _$PostStore on _PostStore, Store {
       Atom(name: '_PostStore.postList', context: context);
 
   @override
-  PostList? get postList {
+  SikkaXNewsList? get postList {
     _$postListAtom.reportRead();
     return super.postList;
   }
 
   @override
-  set postList(PostList? value) {
+  set postList(SikkaXNewsList? value) {
     _$postListAtom.reportWrite(value, super.postList, () {
       super.postList = value;
     });

@@ -1,7 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:intl/intl.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
+import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
+import 'package:sikka_wallet/presentation/post/store/post_store.dart';
+import 'package:sikka_wallet/utils/device/device_utils.dart';
 
 import '../../constants/app_theme.dart';
 
@@ -11,55 +18,41 @@ class NewsFeedScreen extends StatefulWidget {
 }
 
 class _NewsFeedScreenState extends State<NewsFeedScreen> {
-  List<dynamic> _feedData = [];
+  final PostStore postStore = getIt<PostStore>();
 
   @override
   void initState() {
     super.initState();
-    _loadFeedData();
-  }
-
-  Future<void> _loadFeedData() async {
-    final String response =
-        await rootBundle.loadString('assets/json/feed_data.json');
-    final List<dynamic> data = json.decode(response);
-    setState(() {
-      _feedData = data;
-    });
+    postStore.getPosts();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.deepPurple,
-        appBar: AppBar(
-          title: Text('Feed', style: AppThemeData.headline1),
-          backgroundColor: Colors.deepPurple,
-          actions: [
-            IconButton(icon: Icon(Icons.notifications_none), onPressed: () {}),
-            IconButton(icon: Icon(Icons.person_outline), onPressed: () {}),
-          ],
-        ),
-        body: _feedData.isEmpty
-            ? Center(child: CircularProgressIndicator())
-            : Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(Dimens.cardRadius),
+        backgroundColor: Color(0xFFA455F8),
+        body: Observer(builder: (context) {
+          postStore.postList?.posts;
+          return postStore.loading
+              ? Center(child: CustomProgressIndicatorWidget())
+              : Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(Dimens.cardRadius),
+                    ),
                   ),
-                ),
-                child: ListView.builder(
-                  padding: EdgeInsets.all(Dimens.paddingMedium),
-                  itemCount: _feedData.length,
-                  itemBuilder: (context, index) {
-                    return _buildFeedCard(_feedData[index]);
-                  },
-                ),
-              ));
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(Dimens.paddingMedium),
+                    itemCount: postStore.postList?.posts?.length,
+                    itemBuilder: (context, index) {
+                      return _buildFeedCard(postStore.postList!.posts![index]);
+                    },
+                  ),
+                );
+        }));
   }
 
-  Widget _buildFeedCard(Map<String, dynamic> item) {
+  Widget _buildFeedCard(SikkaXNews news) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: Dimens.paddingSmall),
       shape: RoundedRectangleBorder(
@@ -71,17 +64,32 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(item['date'], style: AppThemeData.subtitle1),
+            Text(
+              DeviceUtils.formatDate(news.createdAt), // Format date
+              style: AppThemeData.subtitle1,
+            ),
             SizedBox(height: Dimens.paddingSmall),
             ClipRRect(
               borderRadius: BorderRadius.circular(Dimens.cardRadius),
-              child: Image.network(item['image'],
-                  fit: BoxFit.cover, width: double.infinity, height: 150),
+              child: Image.network(
+                news.imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 150,
+                errorBuilder: (context, error, stackTrace) =>
+                    Icon(Icons.image, size: 150, color: Colors.grey),
+              ),
             ),
             SizedBox(height: Dimens.paddingSmall),
-            Text(item['title'], style: AppThemeData.headline2),
+            Text(
+              news.title,
+              style: AppThemeData.headline2,
+            ),
             SizedBox(height: Dimens.paddingSmall),
-            Text(item['description'], style: AppThemeData.bodyText),
+            Text(
+              news.content,
+              style: AppThemeData.bodyText,
+            ),
           ],
         ),
       ),

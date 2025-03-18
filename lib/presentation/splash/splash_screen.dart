@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
+import 'package:sikka_wallet/presentation/registration/signup_screen.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
+import 'package:sikka_wallet/utils/routes/routes.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -72,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          // Navigate to next screen
+          Navigator.pushReplacementNamed(context, Routes.signUp);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,

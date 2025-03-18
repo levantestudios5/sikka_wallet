@@ -5,6 +5,7 @@ import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/core/widgets/custom_circular_button.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
+import 'package:sikka_wallet/utils/routes/routes.dart';
 
 class WalletScreen extends StatefulWidget {
   @override
@@ -43,16 +44,7 @@ class _WalletScreenState extends State<WalletScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppThemeData.primaryColor,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context).translate('wallet'),
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: Dimens.fontLarge),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      backgroundColor: Color(0xFFA455F8),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -133,6 +125,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       icon: Icons
                           .keyboard_arrow_down_rounded, // Change to your desired icon
                       onPressed: () {
+                        Navigator.pushNamed(context, Routes.withdraw);
                         // Button action
                       },
                     ),
@@ -146,6 +139,8 @@ class _WalletScreenState extends State<WalletScreen> {
                 icon: Icons.swap_horiz_outlined, // Change to your desired icon
                 onPressed: () {
                   // Button action
+                  Navigator.pushNamed(context, Routes.exchange);
+
                 },
               ),
             ],

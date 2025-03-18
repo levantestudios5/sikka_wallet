@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:sikka_wallet/core/data/network/dio/dio_client.dart';
 import 'package:sikka_wallet/data/network/constants/endpoints.dart';
 import 'package:sikka_wallet/data/network/rest_client.dart';
+import 'package:sikka_wallet/domain/entity/auth/authentication_response.dart';
 import 'package:sikka_wallet/domain/entity/auth/register_request.dart';
 import 'package:sikka_wallet/domain/entity/post/post_list.dart';
 
@@ -18,12 +19,11 @@ class AuthApi {
   AuthApi(this._dioClient, this._restClient);
 
   /// register user method
-  Future<String> registerUser(
-      RegisterRequest request) async {
+  Future<String> registerUser(RegisterRequest request) async {
     try {
       final response = await _dioClient.dio.post(
         Endpoints.register,
-         data: request.toJson(),
+        data: request.toJson(),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -38,6 +38,27 @@ class AuthApi {
       return "An error occurred while processing your request";
     } catch (e) {
       return "Something went wrong. Please try again later.";
+    }
+  }
+
+  Future<LoginResponse> authenticateUser(String email, String password) async {
+    try {
+      final response = await _dioClient.dio.post(
+        Endpoints.loginUser, // Your API endpoint for login
+        data: {
+          "email": email,
+          "password": password,
+        },
+      );
+
+      return LoginResponse.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data is Map<String, dynamic>) {
+        final errorMessage = e.response?.data['message'] ?? "Login failed";
+        throw Exception(errorMessage);
+      } else {
+        throw Exception("Network error. Please try again.");
+      }
     }
   }
 

@@ -35,13 +35,16 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset:false,
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: Icon(Icons.arrow_back, color: Colors.black),
-
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Icon(Icons.arrow_back, color: Colors.black)),
         title: Text(
           AppLocalizations.of(context).translate('exchange_sikx_to_shib'),
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -56,9 +59,12 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
           children: [
             _buildExchangeInfoCard(context),
             SizedBox(height: Dimens.paddingLarge),
-            SingleChildScrollView(child: _buildTextFieldRow(context, sikxController, "sikx_coins", "12.6K", sikxError, true)),
+            SingleChildScrollView(
+                child: _buildTextFieldRow(context, sikxController, "sikx_coins",
+                    "12.6K", sikxError, true)),
             _buildSwapIcon(),
-            _buildTextFieldRow(context, shibController, "shiba_inu_coins", "", shibError, false),
+            _buildTextFieldRow(context, shibController, "shiba_inu_coins", "",
+                shibError, false),
             SizedBox(height: Dimens.paddingLarge),
             _buildInfoBox(context),
             Spacer(),
@@ -82,19 +88,25 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
         children: [
           Text(
             AppLocalizations.of(context).translate('exchange_economy'),
-            style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
           SizedBox(height: Dimens.paddingSmall),
           Text(
             AppLocalizations.of(context).translate('exchange_details'),
-            style: TextStyle(color: Colors.grey[700],fontSize: 12),
+            style: TextStyle(color: Colors.grey[700], fontSize: 12),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTextFieldRow(BuildContext context, TextEditingController controller, String coinKey, String availableAmount, String? error, bool isSikx) {
+  Widget _buildTextFieldRow(
+      BuildContext context,
+      TextEditingController controller,
+      String coinKey,
+      String availableAmount,
+      String? error,
+      bool isSikx) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,19 +118,22 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
                 controller: controller,
                 keyboardType: TextInputType.number,
                 enabled: isSikx,
-                style: TextStyle(fontSize: Dimens.textSizeLarge, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: Dimens.textSizeLarge,
+                    fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   errorText: error,
                 ),
-                onChanged: (value) => _validateAndConvert(isSikxChanged: isSikx),
+                onChanged: (value) =>
+                    _validateAndConvert(isSikxChanged: isSikx),
               ),
             ),
-            Text(AppLocalizations.of(context).translate(coinKey), style: TextStyle(color: Colors.grey[700])),
+            Text(AppLocalizations.of(context).translate(coinKey),
+                style: TextStyle(color: Colors.grey[700])),
           ],
         ),
         Divider(thickness: 1, color: Colors.grey[300]),
-
         if (availableAmount.isNotEmpty)
           Text(
             "${AppLocalizations.of(context).translate('available')} $availableAmount",
@@ -150,7 +165,7 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
           Expanded(
             child: Text(
               AppLocalizations.of(context).translate('launch_message'),
-              style: TextStyle(color: Colors.grey[800],fontSize: 12),
+              style: TextStyle(color: Colors.grey[800], fontSize: 12),
             ),
           ),
         ],

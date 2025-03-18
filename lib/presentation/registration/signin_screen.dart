@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
+import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/presentation/login/store/login_store.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
+import 'package:sikka_wallet/utils/routes/routes.dart';
 
 import '../../constants/assets.dart';
 
@@ -13,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
+  final UserStore _userStore = getIt<UserStore>();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -25,92 +31,107 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(gradient: AppThemeData.baseGradient),
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: Image.asset(Assets.cover),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.all(Dimens.screenPadding),
-                  child: SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.manual,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(Dimens.cardRadius),
-                          ),
-                          elevation: Dimens.cardElevation,
-                          child: Padding(
-                            padding: const EdgeInsets.all(Dimens.cardPadding),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    AppLocalizations.of(context)
-                                        .translate('login_here'),
-                                    style: AppThemeData.titleStyle
-                                        .copyWith(color: Colors.black),
+          child: Observer(builder: (context) {
+            return _userStore.isLoading
+                ? CustomProgressIndicatorWidget()
+                : Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Image.asset(Assets.cover),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.all(Dimens.screenPadding),
+                          child: SingleChildScrollView(
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.manual,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        Dimens.cardRadius),
                                   ),
-                                  Text(
-                                    AppLocalizations.of(context)
-                                        .translate('login_subtitle'),
-                                    style: AppThemeData.subtitleStyle
-                                        .copyWith(color: Colors.black),
+                                  elevation: Dimens.cardElevation,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(
+                                        Dimens.cardPadding),
+                                    child: Form(
+                                      key: _formKey,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            AppLocalizations.of(context)
+                                                .translate('login_here'),
+                                            style: AppThemeData.titleStyle
+                                                .copyWith(color: Colors.black),
+                                          ),
+                                          Text(
+                                            AppLocalizations.of(context)
+                                                .translate('login_subtitle'),
+                                            style: AppThemeData.subtitleStyle
+                                                .copyWith(color: Colors.black),
+                                          ),
+                                          const SizedBox(
+                                              height: Dimens.textSpacing),
+                                          _buildTextField(
+                                            controller: _emailController,
+                                            hintKey: 'email_address',
+                                            keyboardType:
+                                                TextInputType.emailAddress,
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return AppLocalizations.of(
+                                                        context)
+                                                    .translate(
+                                                        'email_error_empty');
+                                              }
+                                              if (!RegExp(
+                                                      r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                                  .hasMatch(value)) {
+                                                return AppLocalizations.of(
+                                                        context)
+                                                    .translate(
+                                                        'email_error_invalid');
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                          _buildPasswordField(),
+                                          const SizedBox(
+                                              height: Dimens.textSpacing),
+                                          _buildLoginButton(),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  const SizedBox(height: Dimens.textSpacing),
-                                  _buildTextField(
-                                    controller: _emailController,
-                                    hintKey: 'email_address',
-                                    keyboardType: TextInputType.emailAddress,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return AppLocalizations.of(context)
-                                            .translate('email_error_empty');
-                                      }
-                                      if (!RegExp(
-                                              r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                          .hasMatch(value)) {
-                                        return AppLocalizations.of(context)
-                                            .translate('email_error_invalid');
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  _buildPasswordField(),
-                                  const SizedBox(height: Dimens.textSpacing),
-                                  _buildLoginButton(),
-                                ],
-                              ),
+                                ),
+                                SizedBox(
+                                    height: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom),
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(
-                            height: MediaQuery.of(context).viewInsets.bottom),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(Dimens.screenPadding),
-                    child: _buildSignUpLink(),
-                  )),
-            ],
-          ),
+                      ),
+                      Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(Dimens.screenPadding),
+                            child: _buildSignUpLink(),
+                          )),
+                    ],
+                  );
+          }),
         ),
       ),
     );
@@ -210,7 +231,8 @@ class _LoginScreenState extends State<LoginScreen> {
       child: ElevatedButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            // Handle Signup
+            // Handle SignIn
+            _handleLogin(context);
           }
         },
         style: ElevatedButton.styleFrom(
@@ -238,7 +260,9 @@ class _LoginScreenState extends State<LoginScreen> {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, Routes.signUp);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               shape: RoundedRectangleBorder(
@@ -257,5 +281,16 @@ class _LoginScreenState extends State<LoginScreen> {
         )
       ],
     );
+  }
+
+  void _handleLogin(BuildContext context) async {
+    try {
+      await _userStore.login(_emailController.text, _passwordController.text);
+      Navigator.pushReplacementNamed(context, Routes.home);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 }

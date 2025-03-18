@@ -34,7 +34,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
           title: Text(
             "Notification",
           ),
-          leading: Icon(Icons.arrow_back, color: Colors.black)),
+          leading: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Icon(Icons.arrow_back, color: Colors.black))),
       body: _notifications.isEmpty
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(

@@ -2,7 +2,6 @@ import 'package:sikka_wallet/data/sharedpref/constants/preferences.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/presentation/home/store/language/language_store.dart';
 import 'package:sikka_wallet/presentation/home/store/theme/theme_store.dart';
-import 'package:sikka_wallet/presentation/post/post_list.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
 import 'package:sikka_wallet/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: PostListScreen(),
+      body: Container(),
     );
   }
 

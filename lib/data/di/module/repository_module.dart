@@ -21,7 +21,7 @@ class RepositoryModule {
     ));
 
     getIt.registerSingleton<UserRepository>(UserRepositoryImpl(
-      getIt<SharedPreferenceHelper>(),
+      getIt<SharedPreferenceHelper>(), getIt<AuthApi>(),
     ));
 
     getIt.registerSingleton<PostRepository>(PostRepositoryImpl(

@@ -8,6 +8,7 @@ import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/presentation/login/store/login_store.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
+import 'package:sikka_wallet/utils/routes/routes.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -330,7 +331,10 @@ class _SignupScreenState extends State<SignupScreen> {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, Routes.login);
+
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               shape: RoundedRectangleBorder(

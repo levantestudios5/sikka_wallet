@@ -1,5 +1,6 @@
 //
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 /// Helper class for device related operations.
 ///
@@ -35,4 +36,8 @@ class DeviceUtils {
   ///
   static double getScaledHeight(BuildContext context, double scale) =>
       scale * MediaQuery.of(context).size.height;
+
+  static String formatDate(DateTime date) {
+    return DateFormat("MMMM d, y").format(date); // Example: February 27, 2025
+  }
 }

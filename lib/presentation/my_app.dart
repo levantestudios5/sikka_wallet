@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
             // Built-in localization of basic text for Cupertino widgets
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: _userStore.isLoggedIn ? SignupScreen() : SignupScreen(),
+          home: _userStore.isLoggedIn ? BottomNavBar() : SplashScreen(),
         );
       },
     );

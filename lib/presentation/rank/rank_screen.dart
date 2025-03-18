@@ -33,14 +33,6 @@ class _RanksScreenState extends State<RanksScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppThemeData.backgroundColor,
-      appBar: AppBar(
-        title: Text('Ranks',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: Dimens.fontSizeLarge)),
-        backgroundColor: AppThemeData.primaryColor,
-      ),
       body: _ranksData.isEmpty
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

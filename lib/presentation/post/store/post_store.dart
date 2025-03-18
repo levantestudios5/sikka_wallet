@@ -1,4 +1,5 @@
 import 'package:sikka_wallet/core/stores/error/error_store.dart';
+import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/domain/entity/post/post_list.dart';
 import 'package:sikka_wallet/utils/dio/dio_error_util.dart';
 import 'package:mobx/mobx.dart';
@@ -21,15 +22,15 @@ abstract class _PostStore with Store {
   final ErrorStore errorStore;
 
   // store variables:-----------------------------------------------------------
-  static ObservableFuture<PostList?> emptyPostResponse =
-      ObservableFuture.value(null);
+  static ObservableFuture<SikkaXNewsList> emptyPostResponse =
+      ObservableFuture.value(SikkaXNewsList());
 
   @observable
-  ObservableFuture<PostList?> fetchPostsFuture =
-      ObservableFuture<PostList?>(emptyPostResponse);
+  ObservableFuture<SikkaXNewsList> fetchPostsFuture =
+      ObservableFuture<SikkaXNewsList>(emptyPostResponse);
 
   @observable
-  PostList? postList;
+  SikkaXNewsList? postList;
 
   @observable
   bool success = false;
@@ -40,13 +41,16 @@ abstract class _PostStore with Store {
   // actions:-------------------------------------------------------------------
   @action
   Future getPosts() async {
-    final future = _getPostUseCase.call(params: null);
-    fetchPostsFuture = ObservableFuture(future);
-
-    future.then((postList) {
-      this.postList = postList;
-    }).catchError((error) {
-      errorStore.errorMessage = DioExceptionUtil.handleError(error);
-    });
+    if (postList!.posts!.isNotEmpty) {
+      return;
+    } else {
+      final future = _getPostUseCase.call(params: null);
+      fetchPostsFuture = ObservableFuture(future);
+      future.then((postList) {
+        this.postList = postList;
+      }).catchError((error) {
+        errorStore.errorMessage = DioExceptionUtil.handleError(error);
+      });
+    }
   }
 }
