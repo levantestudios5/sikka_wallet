@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sikka_wallet/constants/colors.dart';
 
 class CustomProgressIndicatorWidget extends StatelessWidget {
   const CustomProgressIndicatorWidget({
@@ -20,7 +21,7 @@ class CustomProgressIndicatorWidget extends StatelessWidget {
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(color: Colors.deepPurple,),
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),

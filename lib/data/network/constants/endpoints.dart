@@ -2,7 +2,7 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseUrl = "https://mmm.disruptwave.com";
+  static const String baseUrl = "http://server.sikkax.com";
 
   // receiveTimeout
   static const int receiveTimeout = 15000;
@@ -11,6 +11,7 @@ class Endpoints {
   static const int connectionTimeout = 30000;
 
   // booking endpoints
+  static const String register = baseUrl + "/auth/register";
   static const String getPosts = baseUrl + "/posts";
   static const String getOTP = baseUrl + "/api/otp/send";
   static const String verifyOTP = baseUrl + "/api/otp/verify";

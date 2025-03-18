@@ -17,7 +17,7 @@ class Dimens {
   static const double cardPadding = 16.0;
   static const double cardRadius = 20.0;
   static const double cardElevation = 5.0;
-  static const double inputSpacing = 5.0;
+  static const double inputSpacing = 2.0;
   static const double inputRadius = 10.0;
 // sign in screen
   static const double paddingLarge = 24.0;

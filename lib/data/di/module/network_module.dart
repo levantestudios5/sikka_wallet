@@ -2,6 +2,7 @@ import 'package:sikka_wallet/core/data/network/dio/configs/dio_configs.dart';
 import 'package:sikka_wallet/core/data/network/dio/dio_client.dart';
 import 'package:sikka_wallet/core/data/network/dio/interceptors/auth_interceptor.dart';
 import 'package:sikka_wallet/core/data/network/dio/interceptors/logging_interceptor.dart';
+import 'package:sikka_wallet/data/network/apis/auth/auth_api.dart';
 import 'package:sikka_wallet/data/network/apis/posts/post_api.dart';
 import 'package:sikka_wallet/data/network/constants/endpoints.dart';
 import 'package:sikka_wallet/data/network/interceptors/error_interceptor.dart';
@@ -49,5 +50,7 @@ class NetworkModule {
 
     // api's:-------------------------------------------------------------------
     getIt.registerSingleton(PostApi(getIt<DioClient>(), getIt<RestClient>()));
+
+    getIt.registerSingleton(AuthApi(getIt<DioClient>(), getIt<RestClient>()));
   }
 }

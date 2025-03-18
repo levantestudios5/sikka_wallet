@@ -15,6 +15,13 @@ mixin _$UserStore on _UserStore, Store {
   bool get isLoading => (_$isLoadingComputed ??=
           Computed<bool>(() => super.isLoading, name: '_UserStore.isLoading'))
       .value;
+  Computed<bool>? _$isRegisterLoadingComputed;
+
+  @override
+  bool get isRegisterLoading => (_$isRegisterLoadingComputed ??= Computed<bool>(
+          () => super.isRegisterLoading,
+          name: '_UserStore.isRegisterLoading'))
+      .value;
 
   late final _$successAtom = Atom(name: '_UserStore.success', context: context);
 
@@ -47,6 +54,32 @@ mixin _$UserStore on _UserStore, Store {
     });
   }
 
+  late final _$registerFutureAtom =
+      Atom(name: '_UserStore.registerFuture', context: context);
+
+  @override
+  ObservableFuture<String?> get registerFuture {
+    _$registerFutureAtom.reportRead();
+    return super.registerFuture;
+  }
+
+  @override
+  set registerFuture(ObservableFuture<String?> value) {
+    _$registerFutureAtom.reportWrite(value, super.registerFuture, () {
+      super.registerFuture = value;
+    });
+  }
+
+  late final _$registerUserAsyncAction =
+      AsyncAction('_UserStore.registerUser', context: context);
+
+  @override
+  Future<String> registerUser(String fullName, String email, String password,
+      String inviteCode, String country) {
+    return _$registerUserAsyncAction.run(() =>
+        super.registerUser(fullName, email, password, inviteCode, country));
+  }
+
   late final _$loginAsyncAction =
       AsyncAction('_UserStore.login', context: context);
 
@@ -60,7 +93,9 @@ mixin _$UserStore on _UserStore, Store {
     return '''
 success: ${success},
 loginFuture: ${loginFuture},
-isLoading: ${isLoading}
+registerFuture: ${registerFuture},
+isLoading: ${isLoading},
+isRegisterLoading: ${isRegisterLoading}
     ''';
   }
 }

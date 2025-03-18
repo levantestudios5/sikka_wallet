@@ -1,7 +1,12 @@
+import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
+import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/presentation/login/store/login_store.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -12,11 +17,13 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
+  String countryCode = 'USA';
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _inviteCodeController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final UserStore _userStore = getIt<UserStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -26,211 +33,133 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(gradient: AppThemeData.baseGradient),
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: Image.asset(Assets.cover),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.all(Dimens.screenPadding),
-                  child: SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.manual,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(Dimens.cardRadius),
-                          ),
-                          elevation: Dimens.cardElevation,
-                          child: Padding(
-                            padding: const EdgeInsets.all(Dimens.cardPadding),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    AppLocalizations.of(context)
-                                        .translate('signup_title'),
-                                    style: AppThemeData.titleStyle
-                                        .copyWith(color: Colors.black),
+          child: Observer(builder: (context) {
+            return _userStore.isRegisterLoading
+                ? CustomProgressIndicatorWidget()
+                : Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Image.asset(Assets.cover),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.all(Dimens.screenPadding),
+                          child: SingleChildScrollView(
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.manual,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        Dimens.cardRadius),
                                   ),
-                                  Text(
-                                    AppLocalizations.of(context)
-                                        .translate('signup_subtitle'),
-                                    style: AppThemeData.subtitleStyle
-                                        .copyWith(color: Colors.black),
+                                  elevation: Dimens.cardElevation,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(
+                                        Dimens.cardPadding),
+                                    child: Form(
+                                      key: _formKey,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            AppLocalizations.of(context)
+                                                .translate('signup_title'),
+                                            style: AppThemeData.titleStyle
+                                                .copyWith(color: Colors.black),
+                                          ),
+                                          Text(
+                                            AppLocalizations.of(context)
+                                                .translate('signup_subtitle'),
+                                            style: AppThemeData.subtitleStyle
+                                                .copyWith(color: Colors.black),
+                                          ),
+                                          const SizedBox(
+                                              height: Dimens.textSpacing),
+                                          _buildTextField(
+                                            controller: _nameController,
+                                            hintKey: 'full_name',
+                                            validator: (value) => value!.isEmpty
+                                                ? AppLocalizations.of(context)
+                                                    .translate('name_error')
+                                                : null,
+                                          ),
+                                          _buildTextField(
+                                            controller: _emailController,
+                                            hintKey: 'email_address',
+                                            keyboardType:
+                                                TextInputType.emailAddress,
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return AppLocalizations.of(
+                                                        context)
+                                                    .translate(
+                                                        'email_error_empty');
+                                              }
+                                              if (!RegExp(
+                                                      r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                                  .hasMatch(value)) {
+                                                return AppLocalizations.of(
+                                                        context)
+                                                    .translate(
+                                                        'email_error_invalid');
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                          _buildPasswordField(),
+                                          _buildDropdown(),
+                                          _buildTextField(
+                                            controller: _inviteCodeController,
+                                            hintKey: 'invite_code',
+                                          ),
+                                          const SizedBox(
+                                              height: Dimens.textSpacing),
+                                          _buildRegisterButton(),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  const SizedBox(height: Dimens.textSpacing),
-                                  _buildTextField(
-                                    controller: _nameController,
-                                    hintKey: 'full_name',
-                                    validator: (value) => value!.isEmpty
-                                        ? AppLocalizations.of(context)
-                                            .translate('name_error')
-                                        : null,
-                                  ),
-                                  _buildTextField(
-                                    controller: _emailController,
-                                    hintKey: 'email_address',
-                                    keyboardType: TextInputType.emailAddress,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return AppLocalizations.of(context)
-                                            .translate('email_error_empty');
-                                      }
-                                      if (!RegExp(
-                                              r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                          .hasMatch(value)) {
-                                        return AppLocalizations.of(context)
-                                            .translate('email_error_invalid');
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  _buildPasswordField(),
-                                  _buildDropdown(),
-                                  _buildTextField(
-                                    controller: _inviteCodeController,
-                                    hintKey: 'invite_code',
-                                  ),
-                                  const SizedBox(height: Dimens.textSpacing),
-                                  _buildRegisterButton(),
-                                ],
-                              ),
+                                ),
+                                SizedBox(
+                                    height: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom), // Adjust for keyboard
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(
-                            height: MediaQuery.of(context)
-                                .viewInsets
-                                .bottom), // Adjust for keyboard
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(Dimens.screenPadding),
-                  child: _buildLoginLink(),
-                ),
-              ),
-            ],
-          ),
+                      ),
+                      Observer(
+                        builder: (context) {
+                          return Visibility(
+                            visible: _userStore.isRegisterLoading,
+                            child: CustomProgressIndicatorWidget(),
+                          );
+                        },
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(Dimens.screenPadding),
+                          child: _buildLoginLink(),
+                        ),
+                      ),
+                    ],
+                  );
+          }),
         ),
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     resizeToAvoidBottomInset: true,
-  //     body: SafeArea(
-  //       child: Container(
-  //         width: double.infinity,
-  //         decoration: BoxDecoration(gradient: AppThemeData.baseGradient),
-  //         child: Stack(
-  //           children: [
-  //             Align(
-  //               alignment: Alignment.topRight,
-  //               child: Image.asset(Assets.cover),
-  //             ),
-  //             Align(
-  //               alignment: Alignment.center,
-  //               child: Padding(
-  //                 padding: const EdgeInsets.all(Dimens.screenPadding),
-  //                 child: Card(
-  //                   shape: RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.circular(Dimens.cardRadius),
-  //                   ),
-  //                   elevation: Dimens.cardElevation,
-  //                   child: Padding(
-  //                     padding: const EdgeInsets.all(Dimens.cardPadding),
-  //                     child: Form(
-  //                       key: _formKey,
-  //                       child: Column(
-  //                         mainAxisSize: MainAxisSize.min,
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             AppLocalizations.of(context)
-  //                                 .translate('signup_title'),
-  //                             style: AppThemeData.titleStyle
-  //                                 .copyWith(color: Colors.black),
-  //                           ),
-  //                           Text(
-  //                             AppLocalizations.of(context)
-  //                                 .translate('signup_subtitle'),
-  //                             style: AppThemeData.subtitleStyle
-  //                                 .copyWith(color: Colors.black),
-  //                           ),
-  //                           const SizedBox(height: Dimens.textSpacing),
-  //                           _buildTextField(
-  //                             controller: _nameController,
-  //                             hintKey: 'full_name',
-  //                             validator: (value) => value!.isEmpty
-  //                                 ? AppLocalizations.of(context)
-  //                                     .translate('name_error')
-  //                                 : null,
-  //                           ),
-  //                           _buildTextField(
-  //                             controller: _emailController,
-  //                             hintKey: 'email_address',
-  //                             keyboardType: TextInputType.emailAddress,
-  //                             validator: (value) {
-  //                               if (value!.isEmpty) {
-  //                                 return AppLocalizations.of(context)
-  //                                     .translate('email_error_empty');
-  //                               }
-  //                               if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$')
-  //                                   .hasMatch(value)) {
-  //                                 return AppLocalizations.of(context)
-  //                                     .translate('email_error_invalid');
-  //                               }
-  //                               return null;
-  //                             },
-  //                           ),
-  //                           _buildPasswordField(),
-  //                           _buildDropdown(),
-  //                           _buildTextField(
-  //                             controller: _inviteCodeController,
-  //                             hintKey: 'invite_code',
-  //                           ),
-  //                           const SizedBox(height: Dimens.textSpacing),
-  //                           _buildRegisterButton(),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //             Positioned(
-  //                 bottom: 0,
-  //                 left: 0,
-  //                 right: 0,
-  //                 child: Padding(
-  //                   padding: const EdgeInsets.all(Dimens.screenPadding),
-  //                   child: _buildLoginLink(),
-  //                 )),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildTextField({
     required TextEditingController controller,
@@ -262,13 +191,11 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
           errorStyle: TextStyle(
             color: Colors.red, // Customize the color of the validation text
-            fontSize: 10.0,    // Adjust font size
+            fontSize: 10.0, // Adjust font size
             fontWeight: FontWeight.w300, // Make it bold
           ),
         ),
-
         validator: validator,
-
       ),
     );
   }
@@ -308,7 +235,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
           errorStyle: TextStyle(
             color: Colors.red, // Customize the color of the validation text
-            fontSize: 10.0,    // Adjust font size
+            fontSize: 10.0, // Adjust font size
             fontWeight: FontWeight.w300, // Make it bold
           ),
         ),
@@ -356,7 +283,9 @@ class _SignupScreenState extends State<SignupScreen> {
                 width: 1.0), // Slightly thicker when focused
           ),
         ),
-        onChanged: (value) {},
+        onChanged: (value) {
+          countryCode = value ?? "USA";
+        },
       ),
     );
   }
@@ -365,9 +294,15 @@ class _SignupScreenState extends State<SignupScreen> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
+        onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            // Handle Signup
+            String response = await _userStore.registerUser(
+                _nameController.text.trim(),
+                _emailController.text.trim(),
+                _passwordController.text.trim(),
+                _inviteCodeController.text.trim(),
+                countryCode);
+            _showErrorMessage(response);
           }
         },
         style: ElevatedButton.styleFrom(
@@ -414,5 +349,21 @@ class _SignupScreenState extends State<SignupScreen> {
         )
       ],
     );
+  }
+
+  _showErrorMessage(String message) {
+    if (message.isNotEmpty) {
+      Future.delayed(Duration(milliseconds: 0), () {
+        if (message.isNotEmpty) {
+          FlushbarHelper.createError(
+            message: message,
+            title: AppLocalizations.of(context).translate('home_tv_error'),
+            duration: Duration(seconds: 3),
+          )..show(context);
+        }
+      });
+    }
+
+    return SizedBox.shrink();
   }
 }
