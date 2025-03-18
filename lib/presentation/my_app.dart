@@ -10,6 +10,8 @@ import 'package:sikka_wallet/presentation/login/store/login_store.dart';
 import 'package:sikka_wallet/presentation/notification/notification_screen.dart';
 import 'package:sikka_wallet/presentation/rank/rank_screen.dart';
 import 'package:sikka_wallet/presentation/registration/signin_screen.dart';
+import 'package:sikka_wallet/presentation/registration/signup_screen.dart';
+import 'package:sikka_wallet/presentation/splash/splash_screen.dart';
 import 'package:sikka_wallet/presentation/wallet/exchange_screen.dart';
 import 'package:sikka_wallet/presentation/wallet/wallet_screen.dart';
 import 'package:sikka_wallet/presentation/wallet/widraw_screen.dart';
@@ -53,7 +55,7 @@ class MyApp extends StatelessWidget {
             // Built-in localization of basic text for Cupertino widgets
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: _userStore.isLoggedIn ? BottomNavBar() : BottomNavBar(),
+          home: _userStore.isLoggedIn ? LoginScreen() : LoginScreen(),
         );
       },
     );

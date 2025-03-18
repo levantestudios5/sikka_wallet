@@ -7,6 +7,7 @@ class Assets {
   // login screen assets
   static const String carBackground = "assets/images/img_login.jpg";
   static const String cryptoCrush = "assets/images/crypto_crush.png";
+  static const String cover = "assets/images/cover.png";
   static const String splashIcon = "assets/icons/splash_icon.png";
 
 }

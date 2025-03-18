@@ -3,6 +3,8 @@ import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
 
+import '../../constants/assets.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -19,69 +21,96 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(gradient: AppThemeData.baseGradient),
-        padding: const EdgeInsets.all(Dimens.screenPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Spacer(),
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(Dimens.cardRadius),
+      body: SafeArea(
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(gradient: AppThemeData.baseGradient),
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: Image.asset(Assets.cover),
               ),
-              elevation: Dimens.cardElevation,
-              child: Padding(
-                padding: const EdgeInsets.all(Dimens.cardPadding),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context).translate('login_here'),
-                        style: AppThemeData.titleStyle
-                            .copyWith(color: Colors.black),
-                      ),
-                      Text(
-                        AppLocalizations.of(context)
-                            .translate('login_subtitle'),
-                        style: AppThemeData.subtitleStyle
-                            .copyWith(color: Colors.black),
-                      ),
-                      const SizedBox(height: Dimens.textSpacing),
-                      _buildTextField(
-                        controller: _emailController,
-                        hintKey: 'email_address',
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return AppLocalizations.of(context)
-                                .translate('email_error_empty');
-                          }
-                          if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$')
-                              .hasMatch(value)) {
-                            return AppLocalizations.of(context)
-                                .translate('email_error_invalid');
-                          }
-                          return null;
-                        },
-                      ),
-                      _buildPasswordField(),
-                      const SizedBox(height: Dimens.textSpacing),
-                      _buildLoginButton(),
-                    ],
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.all(Dimens.screenPadding),
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.manual,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(Dimens.cardRadius),
+                          ),
+                          elevation: Dimens.cardElevation,
+                          child: Padding(
+                            padding: const EdgeInsets.all(Dimens.cardPadding),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)
+                                        .translate('login_here'),
+                                    style: AppThemeData.titleStyle
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)
+                                        .translate('login_subtitle'),
+                                    style: AppThemeData.subtitleStyle
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  const SizedBox(height: Dimens.textSpacing),
+                                  _buildTextField(
+                                    controller: _emailController,
+                                    hintKey: 'email_address',
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return AppLocalizations.of(context)
+                                            .translate('email_error_empty');
+                                      }
+                                      if (!RegExp(
+                                              r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                          .hasMatch(value)) {
+                                        return AppLocalizations.of(context)
+                                            .translate('email_error_invalid');
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  _buildPasswordField(),
+                                  const SizedBox(height: Dimens.textSpacing),
+                                  _buildLoginButton(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                            height: MediaQuery.of(context).viewInsets.bottom),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Spacer(),
-            const SizedBox(height: Dimens.textSpacing),
-            _buildSignUpLink(),
-          ],
+              Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(Dimens.screenPadding),
+                    child: _buildSignUpLink(),
+                  )),
+            ],
+          ),
         ),
       ),
     );
@@ -114,6 +143,11 @@ class _LoginScreenState extends State<LoginScreen> {
             borderSide: const BorderSide(
                 color: Colors.black26,
                 width: 1.0), // Slightly thicker when focused
+          ),
+          errorStyle: TextStyle(
+            color: Colors.red, // Customize the color of the validation text
+            fontSize: 10.0, // Adjust font size
+            fontWeight: FontWeight.w300, // Make it bold
           ),
         ),
         validator: validator,
@@ -153,6 +187,11 @@ class _LoginScreenState extends State<LoginScreen> {
             borderSide: const BorderSide(
                 color: Colors.black26,
                 width: 1.0), // Slightly thicker when focused
+          ),
+          errorStyle: TextStyle(
+            color: Colors.red, // Customize the color of the validation text
+            fontSize: 10.0, // Adjust font size
+            fontWeight: FontWeight.w300, // Make it bold
           ),
         ),
         validator: (value) {
