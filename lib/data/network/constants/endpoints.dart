@@ -14,6 +14,7 @@ class Endpoints {
   static const String register = baseUrl + "/auth/register";
   static const String loginUser = baseUrl + "/auth/login";
   static const String getPosts = baseUrl + "/news";
+  static const String getLeaderBoard = baseUrl + "/leaderboard";
   static const String getOTP = baseUrl + "/api/otp/send";
   static const String verifyOTP = baseUrl + "/api/otp/verify";
   static const String logout = baseUrl + "/api/logout";

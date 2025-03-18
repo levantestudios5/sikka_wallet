@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
+import 'package:sikka_wallet/presentation/post/store/post_store.dart';
 import 'package:sikka_wallet/presentation/rank/rank_badge.dart';
 
 class RanksScreen extends StatefulWidget {
@@ -12,53 +16,46 @@ class RanksScreen extends StatefulWidget {
 }
 
 class _RanksScreenState extends State<RanksScreen> {
-  List<dynamic> _ranksData = [];
+  final PostStore postStore = getIt<PostStore>();
 
   @override
   void initState() {
     super.initState();
-    _loadRankData();
-  }
-
-  Future<void> _loadRankData() async {
-    final String response =
-        await rootBundle.loadString('assets/json/ranks_data.json');
-    final List<dynamic> data = json.decode(response);
-    setState(() {
-      _ranksData = data;
-    });
+    postStore.getLeaderBoard();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppThemeData.backgroundColor,
-      body: _ranksData.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: EdgeInsets.all(Dimens.paddingMedium),
-              child: Column(
-                children: [
-                  _buildTopRanks(),
-                  SizedBox(height: Dimens.paddingSmall),
-                  _buildReferralCard(),
-                  SizedBox(height: Dimens.paddingSmall),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: Dimens.paddingSmall),
-                    child: Text(
-                        "Your ranking depends on how many games you played and how many points you earned in each game",
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: Dimens.fontSmall,
-                          fontWeight: FontWeight.w500
-                        )),
-                  ),
-                  SizedBox(height: Dimens.paddingSmall),
-                  _buildRankList(),
-                ],
-              ),
-            ),
+      body: Observer(builder: (context) {
+        postStore.leaderBoardEntryList;
+        return postStore.loadingRanks
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: EdgeInsets.all(Dimens.paddingMedium),
+                child: Column(
+                  children: [
+                    _buildTopRanks(),
+                    SizedBox(height: Dimens.paddingSmall),
+                    _buildReferralCard(),
+                    SizedBox(height: Dimens.paddingSmall),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: Dimens.paddingSmall),
+                      child: Text(
+                          "Your ranking depends on how many games you played and how many points you earned in each game",
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: Dimens.fontSmall,
+                              fontWeight: FontWeight.w500)),
+                    ),
+                    SizedBox(height: Dimens.paddingSmall),
+                    _buildRankList(),
+                  ],
+                ),
+              );
+      }),
     );
   }
 
@@ -77,60 +74,79 @@ class _RanksScreenState extends State<RanksScreen> {
                   fontSize: Dimens.fontSizeLarge,
                   fontWeight: FontWeight.bold)),
           SizedBox(height: Dimens.paddingMedium),
-          Column(
-            children: [
-              // First Row - Top 3 ranks
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: _ranksData
-                    .take(1) // Take first 3 items
-                    .map((item) => _buildRankBadge(item))
-                    .toList(),
-              ),
-              const SizedBox(height: 24), // Space between rows
-              // Second Row - Remaining ranks
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: _ranksData
-                    .skip(1) // Skip first 3 items
-                    .take(3) // Next 3 items
-                    .map((item) => _buildRankBadge(item))
-                    .toList(),
-              ),
-            ],
+          Observer(
+            builder: (context) {
+              postStore.leaderBoardEntryList;
+              return Column(
+                children: [
+                  // First Row - Top 3 ranks
+                  postStore.leaderBoardEntryList?.posts != null &&
+                          postStore.leaderBoardEntryList!.posts!.isNotEmpty
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: postStore.leaderBoardEntryList!.posts!
+                              .take(1) // Take first item
+                              .map((item) => _buildRankBadge(item))
+                              .toList(),
+                        )
+                      : SizedBox(),
+
+                  const SizedBox(height: 24), // Space between rows
+                  // Second Row - Remaining ranks
+                  postStore.leaderBoardEntryList?.posts != null &&
+                          postStore.leaderBoardEntryList!.posts!.isNotEmpty
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: postStore.leaderBoardEntryList!.posts!
+                              .skip(1) // Skip first 3 items
+                              .take(3) // Next 3 items
+                              .map((item) => _buildRankBadge(item))
+                              .toList(),
+                        )
+                      : SizedBox(),
+                ],
+              );
+            }
           )
         ],
       ),
     );
   }
 
-  Widget _buildRankBadge(Map<String, dynamic> rank) {
+  Widget _buildRankBadge(LeaderBoardEntry leaderboard) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         RankBadge(
-          rank: '${rank['rank']}',
-          gradientColor: [
-            rank['badge'] == 'gold'
-                ? Colors.red
-                : rank['badge'] == 'silver'
-                    ? Colors.amberAccent
-                    : rank['badge'] == 'bronze'
-                        ? Colors.grey
-                        : Colors.blue,
-            Colors.transparent
-          ],
+          rank: '${leaderboard.rank}',
+          gradientColor: _getBadgeColor(leaderboard.rank),
         ),
         SizedBox(height: Dimens.paddingSmall),
-        Text(rank['name'],
-            style: TextStyle(
-                color: Colors.white, fontSize: Dimens.defaultFontSize)),
-        Text(rank['points'],
-            style: TextStyle(
-                color: Colors.white70, fontSize: Dimens.defaultFontSize)),
+        Text(
+          leaderboard.fullName,
+          style:
+              TextStyle(color: Colors.white, fontSize: Dimens.defaultFontSize),
+        ),
+        Text(
+          "${leaderboard.sikkaXPoints.toString().split('.')[0]} Points",
+          style: TextStyle(
+              color: Colors.white70, fontSize: Dimens.defaultFontSize),
+        ),
       ],
     );
+  }
+
+  List<Color> _getBadgeColor(int rank) {
+    if (rank == 1) {
+      return [Colors.red, Colors.transparent]; // Gold
+    } else if (rank == 2) {
+      return [Colors.amberAccent, Colors.transparent]; // Silver
+    } else if (rank == 3) {
+      return [Colors.grey, Colors.transparent]; // Bronze
+    } else {
+      return [Colors.blue, Colors.transparent]; // Others
+    }
   }
 
   Widget _buildReferralCard() {
@@ -186,31 +202,60 @@ class _RanksScreenState extends State<RanksScreen> {
   }
 
   Widget _buildRankList() {
-    return Column(
-        children: _ranksData.map((rank) => _buildRankTile(rank)).toList());
+    return Observer(
+      builder: (context) {
+        postStore.leaderBoardEntryList;
+        return postStore.leaderBoardEntryList?.posts != null &&
+                postStore.leaderBoardEntryList!.posts!.isNotEmpty
+            ? Column(
+                children: postStore.leaderBoardEntryList!.posts!
+                    .map((rank) => _buildRankTile(rank))
+                    .toList())
+            : SizedBox();
+      }
+    );
   }
 
-  Widget _buildRankTile(Map<String, dynamic> rank) {
+  Widget _buildRankTile(LeaderBoardEntry leaderboard) {
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(Dimens.borderRadius)),
+        borderRadius: BorderRadius.circular(Dimens.borderRadius),
+      ),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.blue,
-          child: Text(rank['name'][0],
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          child: Text(
+            leaderboard.fullName[0], // First letter of the name
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        title: Text(rank['name'],
-            style: TextStyle(
-                fontSize: Dimens.fontSizeMedium, fontWeight: FontWeight.bold)),
-        subtitle: Text(rank['points'],
-            style: TextStyle(
-                fontSize: Dimens.fontSizeSmall, color: AppThemeData.greyText)),
-        trailing: Text('#${rank['rank']}',
-            style: TextStyle(
-                fontSize: Dimens.fontSizeLarge, fontWeight: FontWeight.bold)),
+        title: Text(
+          leaderboard.fullName,
+          style: TextStyle(
+            fontSize: Dimens.fontSizeMedium,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(
+          "${leaderboard.sikkaXPoints.toStringAsFixed(0)} Points"
+          ,
+          // Display points with one decimal
+          style: TextStyle(
+            fontSize: Dimens.fontSizeSmall,
+            color: AppThemeData.greyText,
+          ),
+        ),
+        trailing: Text(
+          '#${leaderboard.rank}',
+          style: TextStyle(
+            fontSize: Dimens.fontSizeLarge,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }

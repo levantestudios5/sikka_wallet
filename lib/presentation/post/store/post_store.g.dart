@@ -15,6 +15,13 @@ mixin _$PostStore on _PostStore, Store {
   bool get loading => (_$loadingComputed ??=
           Computed<bool>(() => super.loading, name: '_PostStore.loading'))
       .value;
+  Computed<bool>? _$loadingRanksComputed;
+
+  @override
+  bool get loadingRanks =>
+      (_$loadingRanksComputed ??= Computed<bool>(() => super.loadingRanks,
+              name: '_PostStore.loadingRanks'))
+          .value;
 
   late final _$fetchPostsFutureAtom =
       Atom(name: '_PostStore.fetchPostsFuture', context: context);
@@ -32,6 +39,24 @@ mixin _$PostStore on _PostStore, Store {
     });
   }
 
+  late final _$fetchLeaderBoardEntryListFutureAtom = Atom(
+      name: '_PostStore.fetchLeaderBoardEntryListFuture', context: context);
+
+  @override
+  ObservableFuture<LeaderBoardEntryList> get fetchLeaderBoardEntryListFuture {
+    _$fetchLeaderBoardEntryListFutureAtom.reportRead();
+    return super.fetchLeaderBoardEntryListFuture;
+  }
+
+  @override
+  set fetchLeaderBoardEntryListFuture(
+      ObservableFuture<LeaderBoardEntryList> value) {
+    _$fetchLeaderBoardEntryListFutureAtom
+        .reportWrite(value, super.fetchLeaderBoardEntryListFuture, () {
+      super.fetchLeaderBoardEntryListFuture = value;
+    });
+  }
+
   late final _$postListAtom =
       Atom(name: '_PostStore.postList', context: context);
 
@@ -45,6 +70,23 @@ mixin _$PostStore on _PostStore, Store {
   set postList(SikkaXNewsList? value) {
     _$postListAtom.reportWrite(value, super.postList, () {
       super.postList = value;
+    });
+  }
+
+  late final _$leaderBoardEntryListAtom =
+      Atom(name: '_PostStore.leaderBoardEntryList', context: context);
+
+  @override
+  LeaderBoardEntryList? get leaderBoardEntryList {
+    _$leaderBoardEntryListAtom.reportRead();
+    return super.leaderBoardEntryList;
+  }
+
+  @override
+  set leaderBoardEntryList(LeaderBoardEntryList? value) {
+    _$leaderBoardEntryListAtom.reportWrite(value, super.leaderBoardEntryList,
+        () {
+      super.leaderBoardEntryList = value;
     });
   }
 
@@ -71,13 +113,24 @@ mixin _$PostStore on _PostStore, Store {
     return _$getPostsAsyncAction.run(() => super.getPosts());
   }
 
+  late final _$getLeaderBoardAsyncAction =
+      AsyncAction('_PostStore.getLeaderBoard', context: context);
+
+  @override
+  Future<dynamic> getLeaderBoard() {
+    return _$getLeaderBoardAsyncAction.run(() => super.getLeaderBoard());
+  }
+
   @override
   String toString() {
     return '''
 fetchPostsFuture: ${fetchPostsFuture},
+fetchLeaderBoardEntryListFuture: ${fetchLeaderBoardEntryListFuture},
 postList: ${postList},
+leaderBoardEntryList: ${leaderBoardEntryList},
 success: ${success},
-loading: ${loading}
+loading: ${loading},
+loadingRanks: ${loadingRanks}
     ''';
   }
 }

@@ -45,14 +45,14 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                     padding: EdgeInsets.all(Dimens.paddingMedium),
                     itemCount: postStore.postList?.posts?.length,
                     itemBuilder: (context, index) {
-                      return _buildFeedCard(postStore.postList!.posts![index]);
+                      return _buildFeedCard(postStore.postList?.posts?[index]);
                     },
                   ),
                 );
         }));
   }
 
-  Widget _buildFeedCard(SikkaXNews news) {
+  Widget _buildFeedCard(SikkaXNews? news) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: Dimens.paddingSmall),
       shape: RoundedRectangleBorder(
@@ -65,14 +65,14 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              DeviceUtils.formatDate(news.createdAt), // Format date
+              DeviceUtils.formatDate(news?.createdAt??DateTime.now()), // Format date
               style: AppThemeData.subtitle1,
             ),
             SizedBox(height: Dimens.paddingSmall),
             ClipRRect(
               borderRadius: BorderRadius.circular(Dimens.cardRadius),
               child: Image.network(
-                news.imageUrl,
+                news?.imageUrl??"",
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 150,
@@ -82,12 +82,12 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
             ),
             SizedBox(height: Dimens.paddingSmall),
             Text(
-              news.title,
+              news?.title??"",
               style: AppThemeData.headline2,
             ),
             SizedBox(height: Dimens.paddingSmall),
             Text(
-              news.content,
+              news?.content??"",
               style: AppThemeData.bodyText,
             ),
           ],

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:sikka_wallet/core/data/network/dio/dio_client.dart';
 import 'package:sikka_wallet/data/network/constants/endpoints.dart';
 import 'package:sikka_wallet/data/network/rest_client.dart';
+import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/domain/entity/post/post_list.dart';
 
@@ -27,14 +28,13 @@ class PostApi {
     }
   }
 
-  /// sample api call with default rest client
-//   Future<PostList> getPosts() async {
-//     try {
-//       final res = await _restClient.get(Endpoints.getPosts);
-//       return PostList.fromJson(res.data);
-//     } catch (e) {
-//       print(e.toString());
-//       throw e;
-//     }
-//   }
+  Future<LeaderBoardEntryList> getLeaderboard() async {
+    try {
+      final response = await _dioClient.dio.get(Endpoints.getLeaderBoard);
+      return LeaderBoardEntryList.fromJson(response.data);
+    } catch (e) {
+      throw Exception("Failed to load leaderboard: $e");
+    }
+  }
+
 }
