@@ -12,6 +12,7 @@ class Assets {
 
   static const String walletIcon = "assets/icons/wallet_icon.png";
   static const String gameIcon = "assets/icons/game.png";
+  static const String shiba = "assets/icons/shiba.png";
   static const String rankIcon = "assets/icons/rank.png";
   static const String sikkaIcon = "assets/icons/sikka.png";
   static const String feedIcon = "assets/icons/feed.png";

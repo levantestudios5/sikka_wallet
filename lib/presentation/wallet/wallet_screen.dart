@@ -1,9 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
+import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/core/widgets/custom_circular_button.dart';
+import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/presentation/post/store/post_store.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
 import 'package:sikka_wallet/utils/routes/routes.dart';
 
@@ -14,7 +19,7 @@ class WalletScreen extends StatefulWidget {
 
 class _WalletScreenState extends State<WalletScreen> {
   List<dynamic> _transactions = [];
-  List<dynamic> _walletCards = [];
+  final PostStore postStore = getIt<PostStore>();
 
   @override
   void initState() {
@@ -37,7 +42,7 @@ class _WalletScreenState extends State<WalletScreen> {
         await rootBundle.loadString('assets/json/wallet_card.json');
     final List<dynamic> data = json.decode(response);
     setState(() {
-      _walletCards = data;
+      //_walletCards = data;
     });
   }
 
@@ -75,79 +80,83 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   Widget _buildWalletCard() {
-    return SizedBox(
-      height: 400, // Set height for horizontal scrolling
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _walletCards.length,
-        itemBuilder: (context, index) {
-          final item = _walletCards[index];
-          return _buildWalletItemCard(item);
-        },
-      ),
-    );
-  }
-
-  Widget _buildWalletItemCard(Map<String, dynamic> item) {
-    return Container(
-      width: 300,
-      margin: EdgeInsets.symmetric(horizontal: Dimens.spacingMedium),
-      padding: EdgeInsets.all(Dimens.paddingLarge),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Dimens.cornerRadiusLarge),
-        gradient: LinearGradient(
-          colors: [Colors.purple.shade50, Colors.white60],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(item['icon'], width: Dimens.coinSize),
-          SizedBox(height: Dimens.spacingMedium),
-          Text(item['balance'],
-              style: TextStyle(
-                  fontSize: Dimens.fontExtraLarge,
-                  fontWeight: FontWeight.bold)),
-          SizedBox(height: Dimens.spacingSmall),
-          Text(item['description'], style: TextStyle(color: Colors.grey)),
-          SizedBox(height: Dimens.spacingMedium),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              item['balance'].toString().contains('SIKX')
-                  ? SizedBox()
-                  : CircularButtonWithLabel(
-                      backgroundColor: Colors.transparent,
-                      label: 'withdraw',
-                      icon: Icons
-                          .keyboard_arrow_down_rounded, // Change to your desired icon
-                      onPressed: () {
-                        Navigator.pushNamed(context, Routes.withdraw);
-                        // Button action
-                      },
-                    ),
-              item['balance'].toString().contains('SIKX')
-                  ? SizedBox()
-                  : SizedBox(width: Dimens.radiusMedium),
-              CircularButtonWithLabel(
-                backgroundColor: Colors.transparent,
-
-                label: 'exchange',
-                icon: Icons.swap_horiz_outlined, // Change to your desired icon
-                onPressed: () {
-                  // Button action
-                  Navigator.pushNamed(context, Routes.exchange);
-
+    return Observer(builder: (context) {
+      return postStore.loadingWallet
+          ? CustomProgressIndicatorWidget()
+          : SizedBox(
+              height: 400, // Set height for horizontal scrolling
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: postStore.coinsList.length,
+                itemBuilder: (context, index) {
+                  final item = postStore.coinsList[index];
+                  return _buildWalletItemCard(item);
                 },
               ),
-            ],
-          )
-        ],
-      ),
-    );
+            );
+    });
+  }
+
+  Widget _buildWalletItemCard(Map<String, dynamic> coin) {
+    return Container(
+        width: 300,
+        margin: EdgeInsets.symmetric(horizontal: Dimens.spacingMedium),
+        padding: EdgeInsets.all(Dimens.paddingLarge),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Dimens.cornerRadiusLarge),
+          gradient: LinearGradient(
+            colors: [Colors.purple.shade50, Colors.white60],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(Assets.shiba, width: Dimens.coinSize),
+            SizedBox(height: Dimens.spacingMedium),
+            Text(
+              "${double.parse(coin['amount']).toStringAsFixed(3)}",
+              // Adjusted for balance
+              style: TextStyle(
+                fontSize: Dimens.fontExtraLarge,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: Dimens.spacingSmall),
+            Text(
+              "${coin['name']}", // Adjusted for description (Coin Name)
+              style: TextStyle(color: Colors.grey),
+            ),
+            SizedBox(height: Dimens.spacingMedium),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                coin['name'].toString().contains('Shiba')
+                    ? CircularButtonWithLabel(
+                        backgroundColor: Colors.transparent,
+                        label: 'withdraw',
+                        icon: Icons.keyboard_arrow_down_rounded,
+                        onPressed: () {
+                          Navigator.pushNamed(context, Routes.withdraw);
+                        },
+                      )
+                    : SizedBox(),
+                coin['name'].toString().contains('SikkaX')
+                    ? CircularButtonWithLabel(
+                        backgroundColor: Colors.transparent,
+                        label: 'exchange',
+                        icon: Icons.swap_horiz_outlined,
+                        onPressed: () {
+                          Navigator.pushNamed(context, Routes.exchange);
+                        },
+                      )
+                    : SizedBox(),
+              ],
+            ),
+          ],
+        ));
   }
 
   Widget _buildAnnouncement() {
@@ -187,7 +196,9 @@ class _WalletScreenState extends State<WalletScreen> {
         ),
         _transactions.isEmpty
             ? Padding(
-                padding: EdgeInsets.symmetric(vertical: Dimens.spacingMedium),
+                padding: EdgeInsets.symmetric(
+                    vertical: Dimens.spacingMedium,
+                    horizontal: Dimens.radiusSmall),
                 child: Text(
                     AppLocalizations.of(context).translate('no_transactions')),
               )

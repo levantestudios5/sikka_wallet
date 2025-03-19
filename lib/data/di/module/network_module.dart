@@ -49,7 +49,7 @@ class NetworkModule {
     );
 
     // api's:-------------------------------------------------------------------
-    getIt.registerSingleton(PostApi(getIt<DioClient>(), getIt<RestClient>()));
+    getIt.registerSingleton(ApiClient(getIt<DioClient>(), getIt<RestClient>()));
 
     getIt.registerSingleton(AuthApi(getIt<DioClient>(), getIt<RestClient>()));
   }

@@ -10,6 +10,8 @@ import 'package:sikka_wallet/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/login_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/save_auth_token_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/save_login_in_status_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/wallet/convert_currency_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/wallet/get_wallet_balance_usecase.dart';
 
 import '../../../di/service_locator.dart';
 
@@ -41,6 +43,13 @@ class UseCaseModule {
     );
     getIt.registerSingleton<GetLeaderBoardUseCase>(
       GetLeaderBoardUseCase(getIt<PostRepository>()),
+    );
+    getIt.registerSingleton<GetWalletBalanceUseCase>(
+      GetWalletBalanceUseCase(getIt<PostRepository>()),
+    );
+
+    getIt.registerSingleton<ConvertCurrencyUseCase>(
+      ConvertCurrencyUseCase(getIt<PostRepository>()),
     );
 
   }

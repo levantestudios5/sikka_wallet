@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/core/widgets/custom_app_bar_widget.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/presentation/feed/news_feed_screen.dart';
 import 'package:sikka_wallet/presentation/game/game_screen.dart';
 import 'package:sikka_wallet/presentation/home/dashboard.dart';
+import 'package:sikka_wallet/presentation/post/store/post_store.dart';
 import 'package:sikka_wallet/presentation/rank/rank_screen.dart';
 import 'package:sikka_wallet/presentation/wallet/wallet_screen.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
@@ -16,7 +18,12 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
-
+  final PostStore postStore = getIt<PostStore>();
+  @override
+  void initState() {
+      postStore.getWalletData();
+    super.initState();
+  }
   final List<Widget> _screens = [
     HomeScreen(),
     GamesScreen(),

@@ -1,5 +1,13 @@
+import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
+import 'package:sikka_wallet/constants/strings.dart';
+import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/domain/entity/wallet/wallet_conversion_request.dart';
+import 'package:sikka_wallet/presentation/post/store/post_store.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
 
 class ExchangeScreen extends StatefulWidget {
@@ -8,9 +16,9 @@ class ExchangeScreen extends StatefulWidget {
 }
 
 class _ExchangeScreenState extends State<ExchangeScreen> {
-  TextEditingController sikxController = TextEditingController(text: "12000");
-  TextEditingController shibController = TextEditingController(text: "10.00");
-
+  final PostStore postStore = getIt<PostStore>();
+  TextEditingController sikxController = TextEditingController(text: "1.00");
+  TextEditingController shibController = TextEditingController(text: "0.00");
   String? sikxError;
   String? shibError;
 
@@ -24,12 +32,17 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
     } else {
       sikxError = null;
     }
-
     if (isSikxChanged) {
-      shibValue = sikxValue / 1200;
+      shibValue = sikxValue / 1;
       shibController.text = shibValue.toStringAsFixed(2);
     }
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    sikxController.text = postStore.walletData?.sikkaXCoin ?? "";
+    super.initState();
   }
 
   @override
@@ -51,27 +64,36 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(Dimens.paddingMedium),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _buildExchangeInfoCard(context),
-            SizedBox(height: Dimens.paddingLarge),
-            SingleChildScrollView(
-                child: _buildTextFieldRow(context, sikxController, "sikx_coins",
-                    "12.6K", sikxError, true)),
-            _buildSwapIcon(),
-            _buildTextFieldRow(context, shibController, "shiba_inu_coins", "",
-                shibError, false),
-            SizedBox(height: Dimens.paddingLarge),
-            _buildInfoBox(context),
-            Spacer(),
-            _buildExchangeButton(context),
-          ],
-        ),
-      ),
+      body: Observer(builder: (context) {
+        return postStore.fetchConversionFuture.status == FutureStatus.pending
+            ? CustomProgressIndicatorWidget()
+            : Padding(
+                padding: EdgeInsets.all(Dimens.paddingMedium),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    _buildExchangeInfoCard(context),
+                    SizedBox(height: Dimens.paddingLarge),
+                    SingleChildScrollView(
+                        child: _buildTextFieldRow(
+                            context,
+                            sikxController,
+                            "sikx_coins",
+                            "${postStore.walletData?.sikkaXCoin}",
+                            sikxError,
+                            true)),
+                    _buildSwapIcon(),
+                    _buildTextFieldRow(context, shibController,
+                        "shiba_inu_coins", "", shibError, false),
+                    SizedBox(height: Dimens.paddingLarge),
+                    _buildInfoBox(context),
+                    Spacer(),
+                    _buildExchangeButton(context),
+                  ],
+                ),
+              );
+      }),
     );
   }
 
@@ -178,10 +200,25 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
       width: double.infinity,
       height: Dimens.buttonHeightLarge,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () async {
+          if (double.parse(postStore.walletData?.sikkaXCoin ?? "0.0") > 0 &&
+              double.parse(sikxController.text) > 0 &&
+              double.parse(sikxController.text) <=
+                  double.parse(postStore.walletData?.sikkaXCoin ?? "0.0")) {
+            await postStore.convertCurrency(WalletConversionRequest(
+                amount: double.parse(sikxController.text),
+                conversionType: Strings.shiba));
+          } else {
+            _showErrorMessage(
+                'You have insufficient coins ${postStore.walletData?.sikkaXCoin} for this transaction!');
+          }
+        },
         child: Text(AppLocalizations.of(context).translate('exchange_button')),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.purple,
+          backgroundColor:
+              double.parse(postStore.walletData?.sikkaXCoin ?? "0.0") < 1
+                  ? Colors.grey
+                  : Colors.purple,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Dimens.borderRadius),
@@ -189,5 +226,21 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
         ),
       ),
     );
+  }
+
+  _showErrorMessage(String message) {
+    if (message.isNotEmpty) {
+      Future.delayed(Duration(milliseconds: 0), () {
+        if (message.isNotEmpty) {
+          FlushbarHelper.createError(
+            message: message,
+            title: AppLocalizations.of(context).translate('home_tv_error'),
+            duration: Duration(seconds: 3),
+          )..show(context);
+        }
+      });
+    }
+
+    return SizedBox.shrink();
   }
 }

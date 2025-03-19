@@ -10,6 +10,8 @@ import 'package:sikka_wallet/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/login_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/save_auth_token_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/save_login_in_status_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/wallet/convert_currency_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/wallet/get_wallet_balance_usecase.dart';
 import 'package:sikka_wallet/presentation/home/store/language/language_store.dart';
 import 'package:sikka_wallet/presentation/home/store/theme/theme_store.dart';
 import 'package:sikka_wallet/presentation/login/store/login_store.dart';
@@ -43,6 +45,8 @@ class StoreModule {
       PostStore(
         getIt<GetPostUseCase>(),
         getIt<GetLeaderBoardUseCase>(),
+        getIt<GetWalletBalanceUseCase>(),
+        getIt<ConvertCurrencyUseCase>(),
         getIt<ErrorStore>(),
       ),
     );

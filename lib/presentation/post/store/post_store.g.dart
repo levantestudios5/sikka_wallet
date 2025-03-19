@@ -15,6 +15,20 @@ mixin _$PostStore on _PostStore, Store {
   bool get loading => (_$loadingComputed ??=
           Computed<bool>(() => super.loading, name: '_PostStore.loading'))
       .value;
+  Computed<bool>? _$loadingWalletComputed;
+
+  @override
+  bool get loadingWallet =>
+      (_$loadingWalletComputed ??= Computed<bool>(() => super.loadingWallet,
+              name: '_PostStore.loadingWallet'))
+          .value;
+  Computed<bool>? _$loadingConversionComputed;
+
+  @override
+  bool get loadingConversion => (_$loadingConversionComputed ??= Computed<bool>(
+          () => super.loadingConversion,
+          name: '_PostStore.loadingConversion'))
+      .value;
   Computed<bool>? _$loadingRanksComputed;
 
   @override
@@ -36,6 +50,39 @@ mixin _$PostStore on _PostStore, Store {
   set fetchPostsFuture(ObservableFuture<SikkaXNewsList> value) {
     _$fetchPostsFutureAtom.reportWrite(value, super.fetchPostsFuture, () {
       super.fetchPostsFuture = value;
+    });
+  }
+
+  late final _$fetchWalletFutureAtom =
+      Atom(name: '_PostStore.fetchWalletFuture', context: context);
+
+  @override
+  ObservableFuture<WalletData> get fetchWalletFuture {
+    _$fetchWalletFutureAtom.reportRead();
+    return super.fetchWalletFuture;
+  }
+
+  @override
+  set fetchWalletFuture(ObservableFuture<WalletData> value) {
+    _$fetchWalletFutureAtom.reportWrite(value, super.fetchWalletFuture, () {
+      super.fetchWalletFuture = value;
+    });
+  }
+
+  late final _$fetchConversionFutureAtom =
+      Atom(name: '_PostStore.fetchConversionFuture', context: context);
+
+  @override
+  ObservableFuture<WalletConversion> get fetchConversionFuture {
+    _$fetchConversionFutureAtom.reportRead();
+    return super.fetchConversionFuture;
+  }
+
+  @override
+  set fetchConversionFuture(ObservableFuture<WalletConversion> value) {
+    _$fetchConversionFutureAtom.reportWrite(value, super.fetchConversionFuture,
+        () {
+      super.fetchConversionFuture = value;
     });
   }
 
@@ -70,6 +117,54 @@ mixin _$PostStore on _PostStore, Store {
   set postList(SikkaXNewsList? value) {
     _$postListAtom.reportWrite(value, super.postList, () {
       super.postList = value;
+    });
+  }
+
+  late final _$walletDataAtom =
+      Atom(name: '_PostStore.walletData', context: context);
+
+  @override
+  WalletData? get walletData {
+    _$walletDataAtom.reportRead();
+    return super.walletData;
+  }
+
+  @override
+  set walletData(WalletData? value) {
+    _$walletDataAtom.reportWrite(value, super.walletData, () {
+      super.walletData = value;
+    });
+  }
+
+  late final _$walletConversionAtom =
+      Atom(name: '_PostStore.walletConversion', context: context);
+
+  @override
+  WalletConversion? get walletConversion {
+    _$walletConversionAtom.reportRead();
+    return super.walletConversion;
+  }
+
+  @override
+  set walletConversion(WalletConversion? value) {
+    _$walletConversionAtom.reportWrite(value, super.walletConversion, () {
+      super.walletConversion = value;
+    });
+  }
+
+  late final _$coinsListAtom =
+      Atom(name: '_PostStore.coinsList', context: context);
+
+  @override
+  List<Map<String, String>> get coinsList {
+    _$coinsListAtom.reportRead();
+    return super.coinsList;
+  }
+
+  @override
+  set coinsList(List<Map<String, String>> value) {
+    _$coinsListAtom.reportWrite(value, super.coinsList, () {
+      super.coinsList = value;
     });
   }
 
@@ -121,15 +216,39 @@ mixin _$PostStore on _PostStore, Store {
     return _$getLeaderBoardAsyncAction.run(() => super.getLeaderBoard());
   }
 
+  late final _$getWalletDataAsyncAction =
+      AsyncAction('_PostStore.getWalletData', context: context);
+
+  @override
+  Future<dynamic> getWalletData() {
+    return _$getWalletDataAsyncAction.run(() => super.getWalletData());
+  }
+
+  late final _$convertCurrencyAsyncAction =
+      AsyncAction('_PostStore.convertCurrency', context: context);
+
+  @override
+  Future<dynamic> convertCurrency(WalletConversionRequest request) {
+    return _$convertCurrencyAsyncAction
+        .run(() => super.convertCurrency(request));
+  }
+
   @override
   String toString() {
     return '''
 fetchPostsFuture: ${fetchPostsFuture},
+fetchWalletFuture: ${fetchWalletFuture},
+fetchConversionFuture: ${fetchConversionFuture},
 fetchLeaderBoardEntryListFuture: ${fetchLeaderBoardEntryListFuture},
 postList: ${postList},
+walletData: ${walletData},
+walletConversion: ${walletConversion},
+coinsList: ${coinsList},
 leaderBoardEntryList: ${leaderBoardEntryList},
 success: ${success},
 loading: ${loading},
+loadingWallet: ${loadingWallet},
+loadingConversion: ${loadingConversion},
 loadingRanks: ${loadingRanks}
     ''';
   }

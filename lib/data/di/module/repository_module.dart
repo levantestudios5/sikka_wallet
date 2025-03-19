@@ -25,7 +25,7 @@ class RepositoryModule {
     ));
 
     getIt.registerSingleton<PostRepository>(PostRepositoryImpl(
-      getIt<PostApi>(),
+      getIt<ApiClient>(),
     ));
 
     getIt.registerSingleton<AuthRepository>(AuthRepositoryImpl(
