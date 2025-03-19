@@ -2,13 +2,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/core/widgets/custom_circular_button.dart';
 import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/domain/entity/transaction/transaction.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
+import 'package:sikka_wallet/utils/device/device_utils.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
 import 'package:sikka_wallet/utils/routes/routes.dart';
 
@@ -18,61 +21,42 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
-  List<dynamic> _transactions = [];
   final PostStore postStore = getIt<PostStore>();
 
   @override
   void initState() {
     super.initState();
-    _loadTransactions();
-    _loadWalletCards();
-  }
-
-  Future<void> _loadTransactions() async {
-    final String response =
-        await rootBundle.loadString('assets/json/notifications.json');
-    final List<dynamic> data = json.decode(response);
-    setState(() {
-      _transactions = data;
-    });
-  }
-
-  Future<void> _loadWalletCards() async {
-    final String response =
-        await rootBundle.loadString('assets/json/wallet_card.json');
-    final List<dynamic> data = json.decode(response);
-    setState(() {
-      //_walletCards = data;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFA455F8),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.purple.shade100, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Flexible(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.purple.shade100, Colors.white],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(Dimens.cornerRadiusLarge),
+              topRight: Radius.circular(Dimens.cornerRadiusLarge),
+            ),
           ),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(Dimens.cornerRadiusLarge),
-            topRight: Radius.circular(Dimens.cornerRadiusLarge),
-          ),
-        ),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(Dimens.paddingMedium),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildWalletCard(),
-              SizedBox(height: Dimens.spacingLarge),
-              _buildAnnouncement(),
-              SizedBox(height: Dimens.spacingLarge),
-              _buildTransactionList(),
-            ],
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(Dimens.paddingMedium),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildWalletCard(),
+                SizedBox(height: Dimens.spacingLarge),
+                _buildAnnouncement(),
+                SizedBox(height: Dimens.spacingLarge),
+                _buildTransactionList(),
+              ],
+            ),
           ),
         ),
       ),
@@ -183,39 +167,47 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   Widget _buildTransactionList() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(
-            AppLocalizations.of(context).translate('transactions'),
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: Dimens.fontMedium),
-          ),
-        ),
-        _transactions.isEmpty
-            ? Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: Dimens.spacingMedium,
-                    horizontal: Dimens.radiusSmall),
-                child: Text(
-                    AppLocalizations.of(context).translate('no_transactions')),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: _transactions.length,
-                itemBuilder: (context, index) {
-                  return _buildTransactionCard(_transactions[index]);
-                },
-              ),
-      ],
-    );
+    return Observer(builder: (context) {
+      return postStore.fetchTransactionFuture.status == FutureStatus.pending
+          ? CustomProgressIndicatorWidget()
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    AppLocalizations.of(context).translate('transactions'),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: Dimens.fontMedium),
+                  ),
+                ),
+                Observer(builder: (context) {
+                  return postStore.transactionList!.posts!.isNotEmpty
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: postStore.transactionList!.posts!.length,
+                          itemBuilder: (context, index) {
+                            return _buildTransactionCard(
+                                postStore.transactionList!.posts![index]);
+                          },
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: Dimens.spacingMedium,
+                              horizontal: Dimens.radiusSmall),
+                          child: Text(AppLocalizations.of(context)
+                              .translate('no_transactions')),
+                        );
+                }),
+              ],
+            );
+    });
   }
 
-  Widget _buildTransactionCard(Map<String, dynamic> item) {
-    bool isExchange = item['type'] == 'EXCHANGE';
+  Widget _buildTransactionCard(Transaction transaction) {
+    bool isExchange = transaction.type == 'EXCHANGE';
     return Card(
       elevation: 1,
       child: Padding(
@@ -225,7 +217,11 @@ class _WalletScreenState extends State<WalletScreen> {
           children: [
             Row(
               children: [
-                Text(item['date'], style: AppThemeData.dateStyle),
+                Text(
+                  DeviceUtils.formatDate(
+                      transaction.createdAt ?? DateTime.now()),
+                  style: AppThemeData.dateStyle,
+                ),
                 Spacer(),
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -238,7 +234,7 @@ class _WalletScreenState extends State<WalletScreen> {
                     borderRadius: BorderRadius.circular(Dimens.spacingLarge),
                   ),
                   child: Text(
-                    item['type'],
+                    transaction.type ?? "",
                     style: AppThemeData.subtitleStyle
                         .copyWith(fontSize: Dimens.spacingMedium),
                   ),
@@ -246,7 +242,8 @@ class _WalletScreenState extends State<WalletScreen> {
               ],
             ),
             SizedBox(height: Dimens.paddingSmall),
-            Text(item['message'], style: AppThemeData.messageStyle),
+            Text(transaction.description ?? "",
+                style: AppThemeData.messageStyle),
           ],
         ),
       ),

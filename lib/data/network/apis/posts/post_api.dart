@@ -8,6 +8,7 @@ import 'package:sikka_wallet/domain/entity/auth/authentication_response.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/domain/entity/post/post_list.dart';
+import 'package:sikka_wallet/domain/entity/transaction/transaction.dart';
 import 'package:sikka_wallet/domain/entity/wallet/conversion.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet_conversion_request.dart';
@@ -51,16 +52,38 @@ class ApiClient {
     }
   }
 
-  Future<WalletConversion> convertCurrency(WalletConversionRequest request) async {
+  Future<WalletConversion> convertCurrency(
+      WalletConversionRequest request) async {
     try {
       final response = await _dioClient.dio.post(
-        Endpoints.convert, // Your API endpoint for login
-        data: {"amount": request.amount, "conversionType": request.conversionType},
+        Endpoints.convert,
+        data: {
+          "amount": request.amount,
+          "conversionType": request.conversionType
+        },
       );
       return WalletConversion.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response != null && e.response?.data is Map<String, dynamic>) {
-        final errorMessage = e.response?.data['message'] ?? "Login failed";
+        final errorMessage =
+            e.response?.data['message'] ?? "Failed to convert currency";
+        throw Exception(errorMessage);
+      } else {
+        throw Exception("Network error. Please try again.");
+      }
+    }
+  }
+
+  Future<TransactionList> getTransactionHistory() async {
+    try {
+      final response = await _dioClient.dio.get(
+        Endpoints.transaction,
+      );
+      return TransactionList.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data is Map<String, dynamic>) {
+        final errorMessage =
+            e.response?.data['message'] ?? "Failed to get transaction history";
         throw Exception(errorMessage);
       } else {
         throw Exception("Network error. Please try again.");

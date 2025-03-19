@@ -60,3 +60,20 @@ class Transaction {
 List<Transaction> parseTransactions(List<dynamic> jsonList) {
   return jsonList.map((json) => Transaction.fromJson(json)).toList();
 }
+
+class TransactionList {
+  final List<Transaction>? posts;
+
+  TransactionList({
+    this.posts,
+  });
+
+  factory TransactionList.fromJson(List<dynamic> json) {
+    List<Transaction> posts = <Transaction>[];
+    posts = json.map((post) => Transaction.fromJson(post)).toList();
+
+    return TransactionList(
+      posts: posts,
+    );
+  }
+}

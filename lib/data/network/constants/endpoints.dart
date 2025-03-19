@@ -17,6 +17,7 @@ class Endpoints {
   static const String getLeaderBoard = baseUrl + "/leaderboard";
   static const String wallet = baseUrl + "/wallet/balance";
   static const String convert = baseUrl + "/wallet/convert";
+  static const String transaction = baseUrl + "/wallet/transactions";
   static const String getOTP = baseUrl + "/api/otp/send";
   static const String verifyOTP = baseUrl + "/api/otp/verify";
   static const String logout = baseUrl + "/api/logout";

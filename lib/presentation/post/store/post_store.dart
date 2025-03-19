@@ -2,9 +2,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sikka_wallet/core/stores/error/error_store.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
+import 'package:sikka_wallet/domain/entity/transaction/transaction.dart';
 import 'package:sikka_wallet/domain/entity/wallet/conversion.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet_conversion_request.dart';
+import 'package:sikka_wallet/domain/usecase/transaction/get_transaction_history_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/wallet/convert_currency_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/wallet/get_wallet_balance_usecase.dart';
 import 'package:sikka_wallet/utils/dio/dio_error_util.dart';
@@ -24,6 +26,7 @@ abstract class _PostStore with Store {
       this._getLeaderBoardUseCase,
       this._getWalletBalanceUseCase,
       this._convertCurrencyUseCase,
+      this._getTransactionHistoryUseCase,
       this.errorStore) {
     _initializeNotifications();
   }
@@ -33,6 +36,7 @@ abstract class _PostStore with Store {
   final GetLeaderBoardUseCase _getLeaderBoardUseCase;
   final GetWalletBalanceUseCase _getWalletBalanceUseCase;
   final ConvertCurrencyUseCase _convertCurrencyUseCase;
+  final GetTransactionHistoryUseCase _getTransactionHistoryUseCase;
 
   // stores:--------------------------------------------------------------------
   // store for handling errors
@@ -41,6 +45,14 @@ abstract class _PostStore with Store {
 //todo conversion ka sara kam kr lia ha bs call kr k validate kro or
   //usk bd notification didkha do
   // store variables:-----------------------------------------------------------
+
+  static ObservableFuture<TransactionList> emptyTransactionResponse =
+      ObservableFuture.value(TransactionList());
+
+  @observable
+  ObservableFuture<TransactionList> fetchTransactionFuture =
+      ObservableFuture<TransactionList>(emptyTransactionResponse);
+
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -75,6 +87,9 @@ abstract class _PostStore with Store {
 
   @observable
   SikkaXNewsList? postList;
+
+  @observable
+  TransactionList? transactionList;
 
   @observable
   WalletData? walletData;
@@ -142,12 +157,25 @@ abstract class _PostStore with Store {
   }
 
   @action
+  Future getTransactionHistory() async {
+    transactionList = TransactionList();
+    final future = _getTransactionHistoryUseCase.call(params: null);
+    fetchTransactionFuture = ObservableFuture(future);
+    future.then((transactionList) {
+      this.transactionList = transactionList;
+    }).catchError((error) {
+      errorStore.errorMessage = DioExceptionUtil.handleError(error);
+    });
+  }
+
+  @action
   Future convertCurrency(WalletConversionRequest request) async {
     final future = _convertCurrencyUseCase.call(params: request);
     fetchConversionFuture = ObservableFuture(future);
 
     return future.then((walletData) {
       getWalletData();
+      getTransactionHistory();
       this.walletConversion = walletData;
       // Show notification on success
       _showSuccessNotification("${walletData.description}");

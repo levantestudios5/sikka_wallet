@@ -1,8 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
+import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/domain/entity/transaction/transaction.dart';
+import 'package:sikka_wallet/presentation/post/store/post_store.dart';
+import 'package:sikka_wallet/utils/device/device_utils.dart';
+import 'package:sikka_wallet/utils/locale/app_localization.dart';
 
 class NotificationScreen extends StatefulWidget {
   @override
@@ -10,21 +18,11 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  List<dynamic> _notifications = [];
+  final PostStore postStore = getIt<PostStore>();
 
   @override
   void initState() {
     super.initState();
-    _loadNotifications();
-  }
-
-  Future<void> _loadNotifications() async {
-    final String response =
-        await rootBundle.loadString('assets/json/notifications.json');
-    final List<dynamic> data = json.decode(response);
-    setState(() {
-      _notifications = data;
-    });
   }
 
   @override
@@ -39,22 +37,41 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 Navigator.of(context).pop();
               },
               child: Icon(Icons.arrow_back, color: Colors.black))),
-      body: _notifications.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: EdgeInsets.all(Dimens.paddingSmall),
-              itemCount: _notifications.length,
-              itemBuilder: (context, index) {
-                return _buildNotificationCard(_notifications[index]);
-              },
-            ),
+      body: Observer(builder: (context) {
+        return _buildNotificationList();
+      }),
     );
   }
 
-  Widget _buildNotificationCard(Map<String, dynamic> item) {
-    bool isExchange = item['type'] == 'EXCHANGE';
+  Widget _buildNotificationList() {
+    return Observer(builder: (context) {
+      return postStore.fetchTransactionFuture.status == FutureStatus.pending
+          ? CustomProgressIndicatorWidget()
+          : Observer(builder: (context) {
+              return postStore.transactionList!.posts!.isNotEmpty
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: postStore.transactionList!.posts!.length,
+                      itemBuilder: (context, index) {
+                        return _buildNotificationCard(
+                            postStore.transactionList!.posts![index]);
+                      },
+                    )
+                  : Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: Dimens.spacingMedium,
+                          horizontal: Dimens.radiusSmall),
+                      child: Text(AppLocalizations.of(context)
+                          .translate('no_notification')),
+                    );
+            });
+    });
+  }
+
+  Widget _buildNotificationCard(Transaction transaction) {
+    bool isExchange = transaction.type == 'EXCHANGE';
     return Card(
-      elevation: Dimens.elevationLow,
+      elevation: 1,
       child: Padding(
         padding: EdgeInsets.all(Dimens.spacingMedium),
         child: Column(
@@ -62,7 +79,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: [
             Row(
               children: [
-                Text(item['date'], style: AppThemeData.dateStyle),
+                Text(
+                  DeviceUtils.formatDate(
+                      transaction.createdAt ?? DateTime.now()),
+                  style: AppThemeData.dateStyle,
+                ),
                 Spacer(),
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -75,7 +96,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     borderRadius: BorderRadius.circular(Dimens.spacingLarge),
                   ),
                   child: Text(
-                    item['type'],
+                    transaction.type ?? "",
                     style: AppThemeData.subtitleStyle
                         .copyWith(fontSize: Dimens.spacingMedium),
                   ),
@@ -83,7 +104,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ],
             ),
             SizedBox(height: Dimens.paddingSmall),
-            Text(item['message'], style: AppThemeData.messageStyle),
+            Text(transaction.description ?? "",
+                style: AppThemeData.messageStyle),
           ],
         ),
       ),

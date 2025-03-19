@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/core/widgets/custom_circular_button.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/presentation/home/bottom_nav_bar.dart';
+import 'package:sikka_wallet/presentation/post/store/post_store.dart';
+import 'package:sikka_wallet/utils/routes/routes.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final PostStore postStore = getIt<PostStore>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFA455F8),
       body: Stack(
         children: [
-          Align(
-              alignment: Alignment.topCenter,
-              child: _buildHeader(context)),
+          Align(alignment: Alignment.topCenter, child: _buildHeader(context)),
           Align(
               alignment: Alignment.bottomCenter,
               child: _showDraggableSheet(context)),
@@ -34,17 +43,17 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-
         children: [
-
           Image.asset("assets/icons/ic_appicon.png", height: 126),
           Text(context.translate("balance"),
               style: TextStyle(color: Colors.white70, fontSize: 14)),
-          Text("12.6K",
-              style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
+          Observer(builder: (context) {
+            return Text(postStore.walletData?.sikkaXPoints.toString() ?? "0.0",
+                style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white));
+          }),
           Text(context.translate("sikka_points"),
               style: TextStyle(color: Colors.white70, fontSize: 14)),
           SizedBox(height: Dimens.padding),
@@ -52,7 +61,9 @@ class HomeScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: AppThemeData.primaryDarkColor),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, Routes.conversionScreen);
+            },
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(Icons.sync_alt, color: AppThemeData.primaryDarkColor),
               SizedBox(width: 8),
@@ -130,7 +141,7 @@ class HomeScreen extends StatelessWidget {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.8,
       child: DraggableScrollableSheet(
-        initialChildSize: 0.5,
+        initialChildSize: 0.46,
         // Start at 50% of screen height
         minChildSize: 0.45,
         // Cannot go lower than 30%

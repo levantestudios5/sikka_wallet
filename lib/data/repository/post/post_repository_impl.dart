@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:sikka_wallet/data/network/apis/posts/post_api.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
+import 'package:sikka_wallet/domain/entity/transaction/transaction.dart';
 import 'package:sikka_wallet/domain/entity/wallet/conversion.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet_conversion_request.dart';
@@ -43,6 +44,13 @@ class PostRepositoryImpl extends PostRepository {
   Future<WalletConversion> convertCurrency(WalletConversionRequest request) async {
     return await _postApi.convertCurrency(request).then((walletBalance) {
       return walletBalance;
+    }).catchError((error) => throw error);
+  }
+
+  @override
+  Future<TransactionList> getTransactionHistory() async {
+    return await _postApi.getTransactionHistory().then((transactionHistory) {
+      return transactionHistory;
     }).catchError((error) => throw error);
   }
 }

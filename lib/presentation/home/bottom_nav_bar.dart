@@ -21,8 +21,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final PostStore postStore = getIt<PostStore>();
   @override
   void initState() {
-      postStore.getWalletData();
     super.initState();
+    postStore.getWalletData();
+    postStore.getTransactionHistory();
   }
   final List<Widget> _screens = [
     HomeScreen(),
