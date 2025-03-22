@@ -32,7 +32,7 @@ class Dimens {
   static const double appBarFontSize = 20.0;
   static const double titleFontSize = 16.0;
   static const double cardRadiusNewsFeed = 12.0;
-  static const double cardElevationNewsFeed = 3.0;
+  static const double cardElevationNewsFeed = 2.0;
   static const double bodyFontSize = 14.0;
   // notification screen
   static const double radiusLarge = 20.0;

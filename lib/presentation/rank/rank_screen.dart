@@ -9,6 +9,8 @@ import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
 import 'package:sikka_wallet/presentation/rank/rank_badge.dart';
+import 'package:sikka_wallet/utils/locale/app_localization.dart';
+import 'package:sikka_wallet/utils/routes/routes.dart';
 
 class RanksScreen extends StatefulWidget {
   @override
@@ -27,87 +29,88 @@ class _RanksScreenState extends State<RanksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppThemeData.backgroundColor,
-      body: Observer(builder: (context) {
-        postStore.leaderBoardEntryList;
-        return postStore.loadingRanks
-            ? Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                padding: EdgeInsets.all(Dimens.paddingMedium),
-                child: Column(
-                  children: [
-                    _buildTopRanks(),
-                    SizedBox(height: Dimens.paddingSmall),
-                    _buildReferralCard(),
-                    SizedBox(height: Dimens.paddingSmall),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: Dimens.paddingSmall),
-                      child: Text(
-                          "Your ranking depends on how many games you played and how many points you earned in each game",
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: Dimens.fontSmall,
-                              fontWeight: FontWeight.w500)),
-                    ),
-                    SizedBox(height: Dimens.paddingSmall),
-                    _buildRankList(),
-                  ],
-                ),
-              );
-      }),
+      backgroundColor: Color(0xFFA455F8),
+      body: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFFF6EDFE),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(Dimens.cardRadius),
+          ),
+        ),
+        child: Observer(builder: (context) {
+          postStore.leaderBoardEntryList;
+          return postStore.loadingRanks
+              ? Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(Dimens.paddingMedium),
+                  child: Column(
+                    children: [
+                      _buildTopRanks(),
+                      SizedBox(height: Dimens.paddingSmall),
+                      _buildReferralCard(),
+                      SizedBox(height: Dimens.paddingSmall),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: Dimens.paddingSmall),
+                        child: Text(
+                            "Your ranking depends on how many games you played and how many points you earned in each game",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: Dimens.fontSmall,
+                                fontWeight: FontWeight.w500)),
+                      ),
+                      SizedBox(height: Dimens.paddingSmall),
+                      _buildRankList(),
+                    ],
+                  ),
+                );
+        }),
+      ),
     );
   }
 
   Widget _buildTopRanks() {
     return Container(
       decoration: BoxDecoration(
+        image: DecorationImage(image: AssetImage(Assets.rankBackDrop)),
         gradient: AppThemeData.rankingGradient,
         borderRadius: BorderRadius.circular(Dimens.borderRadius),
       ),
       padding: EdgeInsets.all(Dimens.paddingMedium),
       child: Column(
         children: [
-          Text('Top Players',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: Dimens.fontSizeLarge,
-                  fontWeight: FontWeight.bold)),
-          SizedBox(height: Dimens.paddingMedium),
-          Observer(
-            builder: (context) {
-              postStore.leaderBoardEntryList;
-              return Column(
-                children: [
-                  // First Row - Top 3 ranks
-                  postStore.leaderBoardEntryList?.posts != null &&
-                          postStore.leaderBoardEntryList!.posts!.isNotEmpty
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: postStore.leaderBoardEntryList!.posts!
-                              .take(1) // Take first item
-                              .map((item) => _buildRankBadge(item))
-                              .toList(),
-                        )
-                      : SizedBox(),
+          Observer(builder: (context) {
+            postStore.leaderBoardEntryList;
+            return Column(
+              children: [
+                // First Row - Top 3 ranks
+                postStore.leaderBoardEntryList?.posts != null &&
+                        postStore.leaderBoardEntryList!.posts!.isNotEmpty
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: postStore.leaderBoardEntryList!.posts!
+                            .take(1) // Take first item
+                            .map((item) => _buildRankBadge(item))
+                            .toList(),
+                      )
+                    : SizedBox(),
 
-                  const SizedBox(height: 24), // Space between rows
-                  // Second Row - Remaining ranks
-                  postStore.leaderBoardEntryList?.posts != null &&
-                          postStore.leaderBoardEntryList!.posts!.isNotEmpty
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: postStore.leaderBoardEntryList!.posts!
-                              .skip(1) // Skip first 3 items
-                              .take(3) // Next 3 items
-                              .map((item) => _buildRankBadge(item))
-                              .toList(),
-                        )
-                      : SizedBox(),
-                ],
-              );
-            }
-          )
+                const SizedBox(height: 24), // Space between rows
+                // Second Row - Remaining ranks
+                postStore.leaderBoardEntryList?.posts != null &&
+                        postStore.leaderBoardEntryList!.posts!.isNotEmpty
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: postStore.leaderBoardEntryList!.posts!
+                            .skip(1) // Skip first 3 items
+                            .take(2) // Next 3 items
+                            .map((item) => _buildRankBadge(item))
+                            .toList(),
+                      )
+                    : SizedBox(),
+              ],
+            );
+          })
         ],
       ),
     );
@@ -118,20 +121,23 @@ class _RanksScreenState extends State<RanksScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        RankBadge(
-          rank: '${leaderboard.rank}',
-          gradientColor: _getBadgeColor(leaderboard.rank),
+        Image.asset(
+          'assets/icons/rank${leaderboard.rank}.png',
+          height: 56,
         ),
-        SizedBox(height: Dimens.paddingSmall),
         Text(
           leaderboard.fullName,
-          style:
-              TextStyle(color: Colors.white, fontSize: Dimens.defaultFontSize),
+          style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: Dimens.defaultFontSize),
         ),
         Text(
           "${leaderboard.sikkaXPoints.toString().split('.')[0]} Points",
           style: TextStyle(
-              color: Colors.white70, fontSize: Dimens.defaultFontSize),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: Dimens.defaultFontSize),
         ),
       ],
     );
@@ -171,24 +177,43 @@ class _RanksScreenState extends State<RanksScreen> {
                   style: TextStyle(
                       color: Colors.white, fontSize: Dimens.fontSizeSmall)),
               SizedBox(height: Dimens.paddingSmall),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(color: Colors.white),
-                    borderRadius: BorderRadius.circular(Dimens.buttonRadius),
-                  ),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                      vertical: Dimens.buttonPadding),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text('Invite Friends',
-                      style: TextStyle(color: Colors.white)),
-                ),
-              ),
+              Container(
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(Dimens.buttonRadius)),
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                  child: Row(
+                    children: [
+                      Text(
+                        'SikkaX1213',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13.5,
+                            color: Colors.white),
+                      ),
+                      Spacer(),
+                      InkWell(
+                          onTap: () {
+                            copyToClipboard('textToCopy');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Copied to clipboard!")),
+                            );
+                          },
+                          child: Icon(
+                            Icons.copy,
+                            color: Colors.white,
+                            size: 18,
+                          ))
+                    ],
+                  )
+                  // Row(children: [
+                  //   Text('SikkaX1213'),
+                  //   Spacer(),
+                  //   Icon(Icons.copy,color: Colors.white,size: 18,)
+                  // ],),
+                  )
             ],
           ),
           CircleAvatar(
@@ -202,25 +227,25 @@ class _RanksScreenState extends State<RanksScreen> {
   }
 
   Widget _buildRankList() {
-    return Observer(
-      builder: (context) {
-        postStore.leaderBoardEntryList;
-        return postStore.leaderBoardEntryList?.posts != null &&
-                postStore.leaderBoardEntryList!.posts!.isNotEmpty
-            ? Column(
-                children: postStore.leaderBoardEntryList!.posts!
-                    .map((rank) => _buildRankTile(rank))
-                    .toList())
-            : SizedBox();
-      }
-    );
+    return Observer(builder: (context) {
+      postStore.leaderBoardEntryList;
+      return postStore.leaderBoardEntryList?.posts != null &&
+              postStore.leaderBoardEntryList!.posts!.isNotEmpty
+          ? Column(
+              children: postStore.leaderBoardEntryList!.posts!
+                  .map((rank) => _buildRankTile(rank))
+                  .toList())
+          : SizedBox();
+    });
   }
 
   Widget _buildRankTile(LeaderBoardEntry leaderboard) {
     return Card(
       elevation: 1,
+      margin: EdgeInsets.only(bottom: 1),
+      color: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Dimens.borderRadius),
+        borderRadius: BorderRadius.circular(0),
       ),
       child: ListTile(
         leading: CircleAvatar(
@@ -241,8 +266,7 @@ class _RanksScreenState extends State<RanksScreen> {
           ),
         ),
         subtitle: Text(
-          "${leaderboard.sikkaXPoints.toStringAsFixed(0)} Points"
-          ,
+          "${leaderboard.sikkaXPoints.toStringAsFixed(0)} Points",
           // Display points with one decimal
           style: TextStyle(
             fontSize: Dimens.fontSizeSmall,
@@ -258,5 +282,9 @@ class _RanksScreenState extends State<RanksScreen> {
         ),
       ),
     );
+  }
+
+  void copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
   }
 }

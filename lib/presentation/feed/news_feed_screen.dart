@@ -36,7 +36,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
               ? Center(child: CustomProgressIndicatorWidget())
               : Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color(0xFFF6EDFE),
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(Dimens.cardRadius),
                     ),
