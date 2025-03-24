@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:sikka_wallet/data/network/apis/posts/post_api.dart';
+import 'package:sikka_wallet/domain/entity/game/game.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/domain/entity/transaction/transaction.dart';
@@ -51,6 +52,13 @@ class PostRepositoryImpl extends PostRepository {
   Future<TransactionList> getTransactionHistory() async {
     return await _postApi.getTransactionHistory().then((transactionHistory) {
       return transactionHistory;
+    }).catchError((error) => throw error);
+  }
+
+  @override
+  Future<GameList> getAllGames() async {
+    return await _postApi.getAllGames().then((gameList) {
+      return gameList;
     }).catchError((error) => throw error);
   }
 }

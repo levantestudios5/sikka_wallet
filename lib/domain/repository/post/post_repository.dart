@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:sikka_wallet/domain/entity/game/game.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/domain/entity/transaction/transaction.dart';
@@ -17,4 +18,5 @@ abstract class PostRepository {
   Future<WalletConversion> convertCurrency(WalletConversionRequest request);
 
   Future<TransactionList> getTransactionHistory();
+  Future<GameList> getAllGames();
 }

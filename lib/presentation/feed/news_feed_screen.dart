@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
+import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
@@ -23,7 +24,6 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
   @override
   void initState() {
     super.initState();
-    postStore.getPosts();
   }
 
   @override
@@ -41,13 +41,35 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                       top: Radius.circular(Dimens.cardRadius),
                     ),
                   ),
-                  child: ListView.builder(
+                  child:
+                  (postStore.postList?.posts?.length??0)>0?
+
+                  ListView.builder(
                     padding: EdgeInsets.all(Dimens.paddingMedium),
                     itemCount: postStore.postList?.posts?.length,
                     itemBuilder: (context, index) {
                       return _buildFeedCard(postStore.postList?.posts?[index]);
                     },
+                  ):
+
+            Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    Assets.feedIcon,
+                    height: 250,
+                    color: Colors.grey
+                    ,
                   ),
+                  Text("We have no feed to show you at this time\nStay Tuned for more updates!",
+                  textAlign: TextAlign.center,
+                    style: AppThemeData.buttonTextStyle.copyWith(color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
                 );
         }));
   }

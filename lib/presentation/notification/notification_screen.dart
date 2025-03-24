@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
+import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
@@ -48,7 +49,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       return postStore.fetchTransactionFuture.status == FutureStatus.pending
           ? CustomProgressIndicatorWidget()
           : Observer(builder: (context) {
-              return postStore.transactionList!.posts!.isNotEmpty
+              return (postStore.transactionList?.posts?.length??0)>0
                   ? ListView.builder(
                       shrinkWrap: true,
                       itemCount: postStore.transactionList!.posts!.length,
@@ -57,7 +58,29 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             postStore.transactionList!.posts![index]);
                       },
                     )
-                  : Padding(
+                  :
+
+              Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.notifications_none_outlined,
+                      color: Colors.grey,
+                      size: 200,
+                    ),
+                    Text(
+                      (AppLocalizations.of(context)
+                          .translate('no_notification')),
+                      textAlign: TextAlign.center,
+                      style: AppThemeData.buttonTextStyle
+                          .copyWith(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              );
+
+              Padding(
                       padding: EdgeInsets.symmetric(
                           vertical: Dimens.spacingMedium,
                           horizontal: Dimens.radiusSmall),

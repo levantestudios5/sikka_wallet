@@ -14,6 +14,7 @@ class Endpoints {
   static const String register = baseUrl + "/auth/register";
   static const String loginUser = baseUrl + "/auth/login";
   static const String getPosts = baseUrl + "/news";
+  static const String getGames = baseUrl + "/game";
   static const String getLeaderBoard = baseUrl + "/leaderboard";
   static const String wallet = baseUrl + "/wallet/balance";
   static const String convert = baseUrl + "/wallet/convert";

@@ -14,6 +14,8 @@ class Assets {
   static const String walletIcon = "assets/icons/wallet_icon.png";
   static const String gameIcon = "assets/icons/game.png";
 
+  static const String game = "assets/icons/game_icon.png";
+
   static const String rank1 = "assets/icons/rank1.png";
   static const String rank2 = "assets/icons/rank2.png";
   static const String rank3 = "assets/icons/rank3.png";

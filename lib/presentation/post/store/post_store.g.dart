@@ -37,6 +37,39 @@ mixin _$PostStore on _PostStore, Store {
               name: '_PostStore.loadingRanks'))
           .value;
 
+  late final _$fetchGameListFutureAtom =
+      Atom(name: '_PostStore.fetchGameListFuture', context: context);
+
+  @override
+  ObservableFuture<GameList> get fetchGameListFuture {
+    _$fetchGameListFutureAtom.reportRead();
+    return super.fetchGameListFuture;
+  }
+
+  @override
+  set fetchGameListFuture(ObservableFuture<GameList> value) {
+    _$fetchGameListFutureAtom.reportWrite(value, super.fetchGameListFuture, () {
+      super.fetchGameListFuture = value;
+    });
+  }
+
+  late final _$fetchTransactionFutureAtom =
+      Atom(name: '_PostStore.fetchTransactionFuture', context: context);
+
+  @override
+  ObservableFuture<TransactionList> get fetchTransactionFuture {
+    _$fetchTransactionFutureAtom.reportRead();
+    return super.fetchTransactionFuture;
+  }
+
+  @override
+  set fetchTransactionFuture(ObservableFuture<TransactionList> value) {
+    _$fetchTransactionFutureAtom
+        .reportWrite(value, super.fetchTransactionFuture, () {
+      super.fetchTransactionFuture = value;
+    });
+  }
+
   late final _$fetchPostsFutureAtom =
       Atom(name: '_PostStore.fetchPostsFuture', context: context);
 
@@ -120,6 +153,38 @@ mixin _$PostStore on _PostStore, Store {
     });
   }
 
+  late final _$transactionListAtom =
+      Atom(name: '_PostStore.transactionList', context: context);
+
+  @override
+  TransactionList? get transactionList {
+    _$transactionListAtom.reportRead();
+    return super.transactionList;
+  }
+
+  @override
+  set transactionList(TransactionList? value) {
+    _$transactionListAtom.reportWrite(value, super.transactionList, () {
+      super.transactionList = value;
+    });
+  }
+
+  late final _$gameListAtom =
+      Atom(name: '_PostStore.gameList', context: context);
+
+  @override
+  GameList? get gameList {
+    _$gameListAtom.reportRead();
+    return super.gameList;
+  }
+
+  @override
+  set gameList(GameList? value) {
+    _$gameListAtom.reportWrite(value, super.gameList, () {
+      super.gameList = value;
+    });
+  }
+
   late final _$walletDataAtom =
       Atom(name: '_PostStore.walletData', context: context);
 
@@ -133,6 +198,22 @@ mixin _$PostStore on _PostStore, Store {
   set walletData(WalletData? value) {
     _$walletDataAtom.reportWrite(value, super.walletData, () {
       super.walletData = value;
+    });
+  }
+
+  late final _$selectedIndexAtom =
+      Atom(name: '_PostStore.selectedIndex', context: context);
+
+  @override
+  int get selectedIndex {
+    _$selectedIndexAtom.reportRead();
+    return super.selectedIndex;
+  }
+
+  @override
+  set selectedIndex(int value) {
+    _$selectedIndexAtom.reportWrite(value, super.selectedIndex, () {
+      super.selectedIndex = value;
     });
   }
 
@@ -224,6 +305,23 @@ mixin _$PostStore on _PostStore, Store {
     return _$getWalletDataAsyncAction.run(() => super.getWalletData());
   }
 
+  late final _$getTransactionHistoryAsyncAction =
+      AsyncAction('_PostStore.getTransactionHistory', context: context);
+
+  @override
+  Future<dynamic> getTransactionHistory() {
+    return _$getTransactionHistoryAsyncAction
+        .run(() => super.getTransactionHistory());
+  }
+
+  late final _$getAllGamesAsyncAction =
+      AsyncAction('_PostStore.getAllGames', context: context);
+
+  @override
+  Future<dynamic> getAllGames() {
+    return _$getAllGamesAsyncAction.run(() => super.getAllGames());
+  }
+
   late final _$convertCurrencyAsyncAction =
       AsyncAction('_PostStore.convertCurrency', context: context);
 
@@ -233,15 +331,34 @@ mixin _$PostStore on _PostStore, Store {
         .run(() => super.convertCurrency(request));
   }
 
+  late final _$_PostStoreActionController =
+      ActionController(name: '_PostStore', context: context);
+
+  @override
+  dynamic updateIndex(int index) {
+    final _$actionInfo = _$_PostStoreActionController.startAction(
+        name: '_PostStore.updateIndex');
+    try {
+      return super.updateIndex(index);
+    } finally {
+      _$_PostStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
+fetchGameListFuture: ${fetchGameListFuture},
+fetchTransactionFuture: ${fetchTransactionFuture},
 fetchPostsFuture: ${fetchPostsFuture},
 fetchWalletFuture: ${fetchWalletFuture},
 fetchConversionFuture: ${fetchConversionFuture},
 fetchLeaderBoardEntryListFuture: ${fetchLeaderBoardEntryListFuture},
 postList: ${postList},
+transactionList: ${transactionList},
+gameList: ${gameList},
 walletData: ${walletData},
+selectedIndex: ${selectedIndex},
 walletConversion: ${walletConversion},
 coinsList: ${coinsList},
 leaderBoardEntryList: ${leaderBoardEntryList},

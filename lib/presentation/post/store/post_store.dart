@@ -1,11 +1,13 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sikka_wallet/core/stores/error/error_store.dart';
+import 'package:sikka_wallet/domain/entity/game/game.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/domain/entity/transaction/transaction.dart';
 import 'package:sikka_wallet/domain/entity/wallet/conversion.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet_conversion_request.dart';
+import 'package:sikka_wallet/domain/usecase/game/get_all_games.dart';
 import 'package:sikka_wallet/domain/usecase/transaction/get_transaction_history_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/wallet/convert_currency_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/wallet/get_wallet_balance_usecase.dart';
@@ -27,6 +29,7 @@ abstract class _PostStore with Store {
       this._getWalletBalanceUseCase,
       this._convertCurrencyUseCase,
       this._getTransactionHistoryUseCase,
+      this._getAllGamesUseCase,
       this.errorStore) {
     _initializeNotifications();
   }
@@ -37,6 +40,7 @@ abstract class _PostStore with Store {
   final GetWalletBalanceUseCase _getWalletBalanceUseCase;
   final ConvertCurrencyUseCase _convertCurrencyUseCase;
   final GetTransactionHistoryUseCase _getTransactionHistoryUseCase;
+  final GetAllGamesUseCase _getAllGamesUseCase;
 
   // stores:--------------------------------------------------------------------
   // store for handling errors
@@ -45,6 +49,13 @@ abstract class _PostStore with Store {
 //todo conversion ka sara kam kr lia ha bs call kr k validate kro or
   //usk bd notification didkha do
   // store variables:-----------------------------------------------------------
+
+  static ObservableFuture<GameList> emptyGameListResponse =
+      ObservableFuture.value(GameList());
+
+  @observable
+  ObservableFuture<GameList> fetchGameListFuture =
+      ObservableFuture<GameList>(emptyGameListResponse);
 
   static ObservableFuture<TransactionList> emptyTransactionResponse =
       ObservableFuture.value(TransactionList());
@@ -92,7 +103,13 @@ abstract class _PostStore with Store {
   TransactionList? transactionList;
 
   @observable
+  GameList? gameList;
+
+  @observable
   WalletData? walletData;
+
+  @observable
+  int selectedIndex = 0;
 
   @observable
   WalletConversion? walletConversion;
@@ -145,6 +162,11 @@ abstract class _PostStore with Store {
   }
 
   @action
+  updateIndex(int index) {
+    this.selectedIndex = index;
+  }
+
+  @action
   Future getWalletData() async {
     final future = _getWalletBalanceUseCase.call(params: null);
     fetchWalletFuture = ObservableFuture(future);
@@ -163,6 +185,18 @@ abstract class _PostStore with Store {
     fetchTransactionFuture = ObservableFuture(future);
     future.then((transactionList) {
       this.transactionList = transactionList;
+    }).catchError((error) {
+      errorStore.errorMessage = DioExceptionUtil.handleError(error);
+    });
+  }
+
+  @action
+  Future getAllGames() async {
+    gameList = GameList();
+    final future = _getAllGamesUseCase.call(params: null);
+    fetchGameListFuture = ObservableFuture(future);
+    future.then((gameList) {
+      this.gameList = gameList;
     }).catchError((error) {
       errorStore.errorMessage = DioExceptionUtil.handleError(error);
     });

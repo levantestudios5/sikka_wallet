@@ -4,6 +4,7 @@ import 'package:sikka_wallet/domain/repository/auth/auth_repository.dart';
 import 'package:sikka_wallet/domain/repository/post/post_repository.dart';
 import 'package:sikka_wallet/domain/repository/user/user_repository.dart';
 import 'package:sikka_wallet/domain/usecase/auth/register_user_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/game/get_all_games.dart';
 import 'package:sikka_wallet/domain/usecase/leaderboard/get_leaderboard_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/post/get_post_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/transaction/get_transaction_history_usecase.dart';
@@ -55,6 +56,10 @@ class UseCaseModule {
 
     getIt.registerSingleton<GetTransactionHistoryUseCase>(
       GetTransactionHistoryUseCase(getIt<PostRepository>()),
+    );
+
+    getIt.registerSingleton<GetAllGamesUseCase>(
+      GetAllGamesUseCase(getIt<PostRepository>()),
     );
 
   }

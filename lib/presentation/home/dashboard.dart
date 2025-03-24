@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/assets.dart';
+import 'package:sikka_wallet/constants/colors.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/core/widgets/custom_circular_button.dart';
+import 'package:sikka_wallet/core/widgets/game_card.dart';
+import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
+import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/presentation/home/bottom_nav_bar.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
+import 'package:sikka_wallet/presentation/rank/rank_screen.dart';
+import 'package:sikka_wallet/utils/device/device_utils.dart';
 import 'package:sikka_wallet/utils/routes/routes.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,18 +27,34 @@ class _HomeScreenState extends State<HomeScreen> {
   final PostStore postStore = getIt<PostStore>();
 
   @override
+  void initState() {
+    postStore.getWalletData();
+    postStore.getAllGames();
+    postStore.getLeaderBoard();
+    postStore.getPosts();
+    postStore.getTransactionHistory();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFA455F8),
-      body: Stack(
-        children: [
-          Align(alignment: Alignment.topCenter, child: _buildHeader(context)),
-          Align(
-              alignment: Alignment.bottomCenter,
-              child: _showDraggableSheet(context)),
-        ],
-      ),
-    );
+        backgroundColor: Color(0xFFA455F8),
+        body: Stack(
+          children: [
+            Align(alignment: Alignment.topCenter, child: _buildHeader(context)),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Observer(builder: (context) {
+                  return (postStore.loading == true ||
+                          postStore.loadingWallet == true ||
+                          postStore.loadingConversion == true ||
+                          postStore.loadingRanks == true)
+                      ? CustomProgressIndicatorWidget()
+                      : _showDraggableSheet(context);
+                }))
+          ],
+        ));
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -101,40 +126,163 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(context.translate("popular_games"),
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             TextButton(
-                onPressed: () {}, child: Text(context.translate("see_all"))),
+                onPressed: () {
+                  setState(() {
+                    postStore.updateIndex(1);
+                  });
+                },
+                child: Text(
+                  context.translate("see_all"),
+                  style: AppThemeData.buttonTextStyle,
+                )),
           ]),
-          SizedBox(height: Dimens.padding),
-          SizedBox(
-            height: Dimens.gameCardHeight,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (_, index) => _buildGameCard(),
-            ),
-          ),
+          (postStore.gameList?.posts?.length ?? 0) > 0
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildGameGrid(),
+                  ],
+                )
+              : Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        Assets.game,
+                        height: 250,
+                      ),
+                      Text(
+                        "You got no games to play at the moment!",
+                        style: AppThemeData.buttonTextStyle
+                            .copyWith(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
         ],
       ),
     );
   }
 
-  Widget _buildGameCard() {
-    return Container(
-      width: 120,
-      margin: EdgeInsets.only(right: Dimens.padding),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Dimens.radius),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 5,
-              spreadRadius: 2)
+  Widget _buildNewsFeed(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(Dimens.padding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text(context.translate("news_feed"),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            TextButton(
+                onPressed: () {
+                  setState(() {
+                    postStore.updateIndex(4);
+                  });
+                },
+                child: Text(
+                  context.translate("see_all"),
+                  style: AppThemeData.buttonTextStyle,
+                )),
+          ]),
+          Observer(builder: (context) {
+            return (postStore.postList?.posts?.length ?? 0) > 0
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: 1,
+                    physics: ScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return _buildFeedCard(postStore.postList?.posts?[index]);
+                    },
+                  )
+                : Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          Assets.feedIcon,
+                          height: 250,
+                          color: Colors.grey,
+                        ),
+                        Text(
+                          "We have no feed to show you at this time\nStay Tuned for more updates!",
+                          textAlign: TextAlign.center,
+                          style: AppThemeData.buttonTextStyle
+                              .copyWith(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  );
+          }),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(Dimens.radius),
-        child: Image.asset("assets/images/crypto_crush.png", fit: BoxFit.cover),
+    );
+  }
+
+  Widget _buildRankings(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(Dimens.padding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text(context.translate("rankings"),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            TextButton(
+                onPressed: () {
+                  setState(() {
+                    postStore.updateIndex(3);
+                  });
+                },
+                child: Text(
+                  context.translate("see_all"),
+                  style: AppThemeData.buttonTextStyle,
+                )),
+          ]),
+          (postStore.leaderBoardEntryList?.posts?.length ?? 0) > 0
+              ? buildRankList()
+              : Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        Assets.rankIcon,
+                        color: Colors.grey,
+                        height: 250,
+                      ),
+                      Text(
+                        "You got no users at the moment!",
+                        textAlign: TextAlign.center,
+                        style: AppThemeData.buttonTextStyle
+                            .copyWith(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+          SizedBox(
+            height: 16,
+          ),
+          _buildReferralCard(),
+        ],
       ),
     );
+  }
+
+  Widget buildRankList() {
+    return Observer(builder: (context) {
+      postStore.leaderBoardEntryList;
+      return postStore.leaderBoardEntryList?.posts != null &&
+              postStore.leaderBoardEntryList!.posts!.isNotEmpty
+          ? Column(
+              children: postStore.leaderBoardEntryList!.posts!
+                  .take(3)
+                  .map((rank) => buildRankTile(rank))
+                  .toList())
+          : SizedBox();
+    });
   }
 
   Widget _showDraggableSheet(BuildContext context) {
@@ -164,11 +312,181 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildAnnouncementCard(context),
                 SizedBox(height: Dimens.padding),
                 _buildPopularGames(context),
+                _buildRankings(context),
+                _buildNewsFeed(context)
               ],
             ),
           );
         },
       ),
     );
+  }
+
+  Widget _buildGameGrid() {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: 1,
+      physics: ScrollPhysics(),
+      // Replace with actual game count
+      itemBuilder: (context, index) {
+        return GameCard(
+          imageUrl: postStore.gameList!.posts![index].gameIconUrl,
+          title: postStore.gameList!.posts![index].name,
+          description: postStore.gameList!.posts![index].description,
+          onPlayNow: () {
+            print("Play Now Clicked!");
+          },
+        );
+      },
+    );
+  }
+
+  Widget buildRankTile(LeaderBoardEntry leaderboard) {
+    return Card(
+      elevation: 1,
+      margin: EdgeInsets.only(bottom: 1),
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.blue,
+          child: Text(
+            leaderboard.fullName[0], // First letter of the name
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        title: Text(
+          leaderboard.fullName,
+          style: TextStyle(
+            fontSize: Dimens.fontSizeMedium,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(
+          "${leaderboard.sikkaXPoints.toStringAsFixed(0)} Points",
+          // Display points with one decimal
+          style: TextStyle(
+            fontSize: Dimens.fontSizeSmall,
+            color: AppThemeData.greyText,
+          ),
+        ),
+        trailing: Text(
+          '#${leaderboard.rank}',
+          style: TextStyle(
+            fontSize: Dimens.fontSizeLarge,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReferralCard() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppThemeData.rankingGradient,
+        borderRadius: BorderRadius.circular(Dimens.borderRadius),
+      ),
+      padding: EdgeInsets.all(12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Refer a Friend',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: Dimens.fontSizeMedium)),
+              Text('Invite friends and earn\n10K SikkaX Points per referral!',
+                  style: TextStyle(
+                      color: Colors.white, fontSize: Dimens.fontSizeSmall)),
+              SizedBox(height: Dimens.paddingSmall),
+              Container(
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(Dimens.buttonRadius)),
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                  child: Row(
+                    children: [
+                      Text(
+                        'SikkaX1213',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13.5,
+                            color: Colors.white),
+                      ),
+                      Spacer(),
+                      InkWell(
+                          onTap: () {
+                            copyToClipboard('textToCopy');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Copied to clipboard!")),
+                            );
+                          },
+                          child: Icon(
+                            Icons.copy,
+                            color: Colors.white,
+                            size: 18,
+                          ))
+                    ],
+                  ))
+            ],
+          ),
+          CircleAvatar(
+            backgroundColor: Colors.transparent,
+            radius: Dimens.defaultLogoSize,
+            child: Image.asset(Assets.appLogo),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedCard(SikkaXNews? news) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          DeviceUtils.formatDate(news?.createdAt ?? DateTime.now()),
+          // Format date
+          style: AppThemeData.subtitle1,
+        ),
+        SizedBox(height: Dimens.paddingSmall),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(Dimens.cardRadius),
+          child: Image.network(
+            news?.imageUrl ?? "",
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 150,
+            errorBuilder: (context, error, stackTrace) =>
+                Icon(Icons.image, size: 150, color: Colors.grey),
+          ),
+        ),
+        SizedBox(height: Dimens.paddingSmall),
+        Text(
+          news?.title ?? "",
+          style: AppThemeData.headline2,
+        ),
+        SizedBox(height: Dimens.paddingSmall),
+        Text(
+          news?.content ?? "",
+          style: AppThemeData.bodyText,
+        ),
+      ],
+    );
+  }
+
+  void copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
   }
 }

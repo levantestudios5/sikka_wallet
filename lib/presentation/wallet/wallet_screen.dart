@@ -32,8 +32,7 @@ class _WalletScreenState extends State<WalletScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFA455F8),
-      body: Flexible(
-        child: Container(
+      body: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.purple.shade100, Colors.white],
@@ -45,21 +44,41 @@ class _WalletScreenState extends State<WalletScreen> {
               topRight: Radius.circular(Dimens.cornerRadiusLarge),
             ),
           ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(Dimens.paddingMedium),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildWalletCard(),
-                SizedBox(height: Dimens.spacingLarge),
-                _buildAnnouncement(),
-                SizedBox(height: Dimens.spacingLarge),
-                _buildTransactionList(),
-              ],
-            ),
-          ),
-        ),
-      ),
+          child: postStore.coinsList.length > 0
+              ? Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(Dimens.paddingMedium),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildWalletCard(),
+                        SizedBox(height: Dimens.spacingLarge),
+                        _buildAnnouncement(),
+                        SizedBox(height: Dimens.spacingLarge),
+                        _buildTransactionList(),
+                      ],
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        Assets.walletIcon,
+                        color: Colors.grey,
+                        height: 250,
+                      ),
+                      Text(
+                        ('You wallet do not have any coins yet\nPlay games and get coins!'),
+                        textAlign: TextAlign.center,
+                        style: AppThemeData.buttonTextStyle
+                            .copyWith(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                )),
     );
   }
 
@@ -72,6 +91,7 @@ class _WalletScreenState extends State<WalletScreen> {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: postStore.coinsList.length,
+                shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final item = postStore.coinsList[index];
                   return _buildWalletItemCard(item);
@@ -83,7 +103,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
   Widget _buildWalletItemCard(Map<String, dynamic> coin) {
     return Container(
-        width: 300,
+        width: 280,
         margin: EdgeInsets.symmetric(horizontal: Dimens.spacingMedium),
         padding: EdgeInsets.all(Dimens.paddingLarge),
         decoration: BoxDecoration(
@@ -183,10 +203,9 @@ class _WalletScreenState extends State<WalletScreen> {
                   ),
                 ),
                 Observer(builder: (context) {
-                  return postStore.transactionList!.posts!.isNotEmpty
+                  return (postStore.transactionList?.posts?.length ?? 0) > 0
                       ? ListView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
                           itemCount: postStore.transactionList!.posts!.length,
                           itemBuilder: (context, index) {
                             return _buildTransactionCard(
@@ -197,8 +216,19 @@ class _WalletScreenState extends State<WalletScreen> {
                           padding: EdgeInsets.symmetric(
                               vertical: Dimens.spacingMedium,
                               horizontal: Dimens.radiusSmall),
-                          child: Text(AppLocalizations.of(context)
-                              .translate('no_transactions')),
+                          child: Column(
+                            children: [
+                              Text(AppLocalizations.of(context)
+                                  .translate('no_transactions')),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Image.asset(Assets.walletIcon),
+                              SizedBox(
+                                height: 16,
+                              ),
+                            ],
+                          ),
                         );
                 }),
               ],

@@ -1,5 +1,6 @@
 import 'package:sikka_wallet/presentation/home/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:sikka_wallet/presentation/home/profile_screen.dart';
 import 'package:sikka_wallet/presentation/notification/notification_screen.dart';
 import 'package:sikka_wallet/presentation/registration/signin_screen.dart';
 import 'package:sikka_wallet/presentation/registration/signup_screen.dart';
@@ -16,6 +17,7 @@ class Routes {
   static const String signUp = '/signUp';
   static const String home = '/post';
   static const String notification = '/notification';
+  static const String profile = '/profile';
   static const String conversionScreen = '/conversion';
   static const String withdraw = '/withdraw';
   static const String exchange = '/exchange';
@@ -27,6 +29,7 @@ class Routes {
     conversionScreen: (BuildContext context) => ConversionScreen(),
     notification: (BuildContext context) => NotificationScreen(),
     withdraw: (BuildContext context) => WithdrawScreen(),
+    profile: (BuildContext context) => ProfileScreen(),
     exchange: (BuildContext context) => ExchangeScreen(),
   };
 }

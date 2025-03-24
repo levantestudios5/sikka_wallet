@@ -5,6 +5,7 @@ import 'package:sikka_wallet/core/data/network/dio/dio_client.dart';
 import 'package:sikka_wallet/data/network/constants/endpoints.dart';
 import 'package:sikka_wallet/data/network/rest_client.dart';
 import 'package:sikka_wallet/domain/entity/auth/authentication_response.dart';
+import 'package:sikka_wallet/domain/entity/game/game.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/domain/entity/post/post_list.dart';
@@ -84,6 +85,22 @@ class ApiClient {
       if (e.response != null && e.response?.data is Map<String, dynamic>) {
         final errorMessage =
             e.response?.data['message'] ?? "Failed to get transaction history";
+        throw Exception(errorMessage);
+      } else {
+        throw Exception("Network error. Please try again.");
+      }
+    }
+  }
+  Future<GameList> getAllGames() async {
+    try {
+      final response = await _dioClient.dio.get(
+        Endpoints.getGames,
+      );
+      return GameList.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data is Map<String, dynamic>) {
+        final errorMessage =
+            e.response?.data['message'] ?? "Failed to get game history";
         throw Exception(errorMessage);
       } else {
         throw Exception("Network error. Please try again.");

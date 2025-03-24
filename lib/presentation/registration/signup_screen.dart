@@ -296,15 +296,7 @@ class _SignupScreenState extends State<SignupScreen> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () async {
-          if (_formKey.currentState!.validate()) {
-            String response = await _userStore.registerUser(
-                _nameController.text.trim(),
-                _emailController.text.trim(),
-                _passwordController.text.trim(),
-                _inviteCodeController.text.trim(),
-                countryCode);
-            _showErrorMessage(response);
-          }
+          showSignUpPopup(context);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.deepPurple,
@@ -369,5 +361,74 @@ class _SignupScreenState extends State<SignupScreen> {
     }
 
     return SizedBox.shrink();
+  }
+
+
+  void showSignUpPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Dimens.dialogRadius)),
+          child: Padding(
+            padding: EdgeInsets.all(Dimens.padding),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(Assets.appLogo,
+                    width: Dimens.iconSizeLarge),
+                SizedBox(height: Dimens.appBarFontSize),
+                Text(
+                  AppLocalizations.of(context).translate('withdrawal_pending'),
+                  style: TextStyle(
+                      fontSize: Dimens.titleSize, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: Dimens.spacingSmall),
+                Text(
+                  AppLocalizations.of(context).translate('singup_message'),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: Dimens.textSize),
+                ),
+                SizedBox(height: Dimens.spacingMedium),
+                _buildDoneButton()
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDoneButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            String response = await _userStore.registerUser(
+                _nameController.text.trim(),
+                _emailController.text.trim(),
+                _passwordController.text.trim(),
+                _inviteCodeController.text.trim(),
+                countryCode);
+            _showErrorMessage(response);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.deepPurple,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Dimens.buttonRadius),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: Dimens.buttonPadding),
+        ),
+        child: Text(
+          AppLocalizations.of(context).translate('done'),
+          style: AppThemeData.buttonTextStyle.copyWith(color: Colors.white),
+        ),
+      ),
+    );
   }
 }

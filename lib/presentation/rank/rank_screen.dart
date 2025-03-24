@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -8,9 +7,6 @@ import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
-import 'package:sikka_wallet/presentation/rank/rank_badge.dart';
-import 'package:sikka_wallet/utils/locale/app_localization.dart';
-import 'package:sikka_wallet/utils/routes/routes.dart';
 
 class RanksScreen extends StatefulWidget {
   @override
@@ -23,7 +19,6 @@ class _RanksScreenState extends State<RanksScreen> {
   @override
   void initState() {
     super.initState();
-    postStore.getLeaderBoard();
   }
 
   @override
@@ -41,29 +36,49 @@ class _RanksScreenState extends State<RanksScreen> {
           postStore.leaderBoardEntryList;
           return postStore.loadingRanks
               ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(Dimens.paddingMedium),
-                  child: Column(
-                    children: [
-                      _buildTopRanks(),
-                      SizedBox(height: Dimens.paddingSmall),
-                      _buildReferralCard(),
-                      SizedBox(height: Dimens.paddingSmall),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: Dimens.paddingSmall),
-                        child: Text(
-                            "Your ranking depends on how many games you played and how many points you earned in each game",
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: Dimens.fontSmall,
-                                fontWeight: FontWeight.w500)),
+              : (postStore.leaderBoardEntryList?.posts?.length ?? 0) > 0
+                  ? SingleChildScrollView(
+                      padding: EdgeInsets.all(Dimens.paddingMedium),
+                      child: Column(
+                        children: [
+                          _buildTopRanks(),
+                          SizedBox(height: Dimens.paddingSmall),
+                          _buildReferralCard(),
+                          SizedBox(height: Dimens.paddingSmall),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: Dimens.paddingSmall),
+                            child: Text(
+                                "Your ranking depends on how many games you played and how many points you earned in each game",
+                                style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: Dimens.fontSmall,
+                                    fontWeight: FontWeight.w500)),
+                          ),
+                          SizedBox(height: Dimens.paddingSmall),
+                          buildRankList(),
+                        ],
                       ),
-                      SizedBox(height: Dimens.paddingSmall),
-                      _buildRankList(),
-                    ],
-                  ),
-                );
+                    )
+                  : Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            Assets.rankIcon,
+                            color: Colors.grey,
+                            height: 250,
+                          ),
+                          Text(
+                            "You got no users at the moment!",
+                            textAlign: TextAlign.center,
+                            style: AppThemeData.buttonTextStyle
+                                .copyWith(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    );
         }),
       ),
     );
@@ -226,20 +241,20 @@ class _RanksScreenState extends State<RanksScreen> {
     );
   }
 
-  Widget _buildRankList() {
+  Widget buildRankList() {
     return Observer(builder: (context) {
       postStore.leaderBoardEntryList;
       return postStore.leaderBoardEntryList?.posts != null &&
               postStore.leaderBoardEntryList!.posts!.isNotEmpty
           ? Column(
               children: postStore.leaderBoardEntryList!.posts!
-                  .map((rank) => _buildRankTile(rank))
+                  .map((rank) => buildRankTile(rank))
                   .toList())
           : SizedBox();
     });
   }
 
-  Widget _buildRankTile(LeaderBoardEntry leaderboard) {
+  Widget buildRankTile(LeaderBoardEntry leaderboard) {
     return Card(
       elevation: 1,
       margin: EdgeInsets.only(bottom: 1),
