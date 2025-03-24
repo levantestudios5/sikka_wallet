@@ -39,7 +39,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void _onItemTapped(int index) {
     setState(() {
       postStore.updateIndex(index);
-
     });
   }
 
@@ -54,14 +53,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
           Navigator.pushNamed(context, Routes.profile);
         },
       ),
-      body: Observer(
-        builder: (context) {
-          return IndexedStack(
-
-              index: postStore.selectedIndex,
-              children: _screens);
-        }
-      ),
+      body: Observer(builder: (context) {
+        return IndexedStack(index: postStore.selectedIndex, children: _screens);
+      }),
       bottomNavigationBar: Observer(builder: (context) {
         postStore.selectedIndex;
         return BottomNavigationBar(
@@ -72,6 +66,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
           items: [
             BottomNavigationBarItem(
                 icon: Image.asset(
+                  Assets.sikkaIconSelected,
+                  height: 18,
+                ),
+                activeIcon: Image.asset(
                   Assets.sikkaIcon,
                   height: 18,
                 ),
@@ -81,10 +79,18 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   Assets.gameIcon,
                   height: 18,
                 ),
+                activeIcon: Image.asset(
+                  Assets.gameIconSelected,
+                  height: 18,
+                ),
                 label: context.translate("games")),
             BottomNavigationBarItem(
                 icon: Image.asset(
                   Assets.walletIcon,
+                  height: 18,
+                ),
+                activeIcon: Image.asset(
+                  Assets.walletIconSelected,
                   height: 18,
                 ),
                 label: context.translate("wallet")),
@@ -93,10 +99,18 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   Assets.rankIcon,
                   height: 18,
                 ),
+                activeIcon: Image.asset(
+                  Assets.rankIconSelected,
+                  height: 18,
+                ),
                 label: context.translate("ranks")),
             BottomNavigationBarItem(
                 icon: Image.asset(
                   Assets.feedIcon,
+                  height: 18,
+                ),
+                activeIcon: Image.asset(
+                  Assets.feedIconSelected,
                   height: 18,
                 ),
                 label: context.translate("feed")),
