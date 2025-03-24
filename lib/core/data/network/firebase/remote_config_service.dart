@@ -4,40 +4,55 @@ class RemoteConfigService {
   final FirebaseRemoteConfig _remoteConfig = FirebaseRemoteConfig.instance;
 
   Future<void> initialize() async {
+    print("We are coming into here");
     await _remoteConfig.setConfigSettings(
       RemoteConfigSettings(
-        fetchTimeout: const Duration(seconds: 10),
-        // Timeout for fetching config
-        minimumFetchInterval:
-            const Duration(hours: 1), // How often to fetch updates
+        fetchTimeout: const Duration(seconds: 10), // Timeout if Firebase is slow
+        minimumFetchInterval: Duration.zero, // Allow fetching new values instantly// How often to fetch updates
       ),
     );
 
     await _remoteConfig.setDefaults(const {
-      'blacklist_version': '0',
+      'blacklist_version': 100,
       'is_force_update': false,
-      'shiba_inu_conversion_value': '0',
-      'sikka_coin_conversion_value': '0',
-      'sikkax_wallet_version': '0',
+      'shiba_inu_conversion_value': 100,
+      'sikka_coin_conversion_value': 100,
+      'sikkax_wallet_version': 100
     });
 
-    await fetchAndActivate();
+    await fetchRemoteConfig();
+  }
+
+  void showAllValues() {
+    _remoteConfig.getAll().forEach((key, value) {
+      print("Alpfa: $key: ${value.asString()}");
+    });
+  }
+  Future<void> fetchRemoteConfig() async {
+    try {
+      await _remoteConfig.fetchAndActivate(); // Fetch new values
+      print("Remote Config fetched successfully!");
+      print("BlackListVersion ${_remoteConfig.getInt('blacklist_version')}");
+      showAllValues();
+    } catch (e) {
+      print("Remote Config fetch failed: $e");
+    }
   }
 
   Future<void> fetchAndActivate() async {
     await _remoteConfig.fetchAndActivate();
   }
 
-  String get blackListVersion => _remoteConfig.getString('blacklist_version');
+  int? get blackListVersion => _remoteConfig.getInt('blacklist_version');
 
   bool get isForceUpdate => _remoteConfig.getBool('is_force_update');
 
-  String get shibaInuConversionValue =>
-      _remoteConfig.getString('shiba_inu_conversion_value');
+  int? get shibaInuConversionValue =>
+      _remoteConfig.getInt('shiba_inu_conversion_value');
 
-  String get sikkaXConversionValue =>
-      _remoteConfig.getString('sikka_coin_conversion_value');
+  int? get sikkaXConversionValue =>
+      _remoteConfig.getInt('sikka_coin_conversion_value');
 
-  String get sikkaWalletVersion =>
-      _remoteConfig.getString('sikkax_wallet_version');
+  int? get sikkaWalletVersion =>
+      _remoteConfig.getInt('sikkax_wallet_version');
 }

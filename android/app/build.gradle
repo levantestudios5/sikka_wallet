@@ -29,7 +29,14 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-
+    signingConfigs {
+        release {
+            storeFile file("/Users/farhan.riaz/StudioProjects/sikka_wallet/android/app/sikkax.keystore")
+            storePassword "sikkax"
+            keyAlias "sikkax"
+            keyPassword "sikkax"
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -37,19 +44,9 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
-}
-dependencies {
-    implementation platform('com.google.firebase:firebase-bom:32.7.1') // Latest BOM version
-    implementation 'com.google.firebase:firebase-core'
-    implementation 'com.google.firebase:firebase-analytics'
+
 }
 
 flutter {
     source = "../.."
-}
-plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"  // ADD THIS LINE
 }

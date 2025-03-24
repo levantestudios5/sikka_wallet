@@ -44,45 +44,42 @@ class _WalletScreenState extends State<WalletScreen> {
               topRight: Radius.circular(Dimens.cornerRadiusLarge),
             ),
           ),
-          child: Observer(
-            builder: (context) {
-              return postStore.coinsList.length > 0
-                  ? Expanded(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.all(Dimens.paddingMedium),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            _buildWalletCard(),
-                            SizedBox(height: Dimens.spacingLarge),
-                            _buildAnnouncement(),
-                            SizedBox(height: Dimens.spacingLarge),
-                            _buildTransactionList(),
-                          ],
+          width: double.infinity,
+          child: Observer(builder: (context) {
+            return postStore.coinsList.length > 0
+                ? SingleChildScrollView(
+                    padding: EdgeInsets.all(Dimens.paddingMedium),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildWalletCard(),
+                        SizedBox(height: Dimens.spacingLarge),
+                        _buildAnnouncement(),
+                        SizedBox(height: Dimens.spacingLarge),
+                        _buildTransactionList(),
+                      ],
+                    ),
+                  )
+                : Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          Assets.walletIcon,
+                          color: Colors.grey,
+                          height: 250,
                         ),
-                      ),
-                    )
-                  : Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            Assets.walletIcon,
-                            color: Colors.grey,
-                            height: 250,
-                          ),
-                          Text(
-                            ('You wallet do not have any coins yet\nPlay games and get coins!'),
-                            textAlign: TextAlign.center,
-                            style: AppThemeData.buttonTextStyle
-                                .copyWith(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    );
-            }
-          )),
+                        Text(
+                          ('You wallet do not have any coins yet\nPlay games and get coins!'),
+                          textAlign: TextAlign.center,
+                          style: AppThemeData.buttonTextStyle
+                              .copyWith(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  );
+          })),
     );
   }
 
@@ -178,7 +175,8 @@ class _WalletScreenState extends State<WalletScreen> {
         children: [
           Icon(Icons.announcement_outlined, color: Colors.purple),
           SizedBox(width: Dimens.spacingSmall),
-          Expanded(
+          SizedBox(
+            width: MediaQuery.of(context).size.width*0.70,
             child: Text(
               AppLocalizations.of(context).translate('announcement_text'),
               style: TextStyle(

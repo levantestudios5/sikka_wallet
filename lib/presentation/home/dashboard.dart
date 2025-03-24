@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Color(0xFFA455F8),
         body: Stack(
           children: [
-            Align(alignment: Alignment.topCenter, child: _buildHeader(context)),
+              Align(alignment: Alignment.topCenter, child: _buildHeader(context)),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Observer(builder: (context) {
