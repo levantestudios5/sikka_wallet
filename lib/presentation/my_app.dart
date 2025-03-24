@@ -1,6 +1,7 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/strings.dart';
+import 'package:sikka_wallet/core/data/network/firebase/remote_config_service.dart';
 import 'package:sikka_wallet/presentation/home/bottom_nav_bar.dart';
 import 'package:sikka_wallet/presentation/home/store/language/language_store.dart';
 import 'package:sikka_wallet/presentation/home/store/theme/theme_store.dart';

@@ -38,7 +38,18 @@ android {
         }
     }
 }
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:32.7.1') // Latest BOM version
+    implementation 'com.google.firebase:firebase-core'
+    implementation 'com.google.firebase:firebase-analytics'
+}
 
 flutter {
     source = "../.."
+}
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"  // ADD THIS LINE
 }

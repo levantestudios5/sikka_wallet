@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sikka_wallet/constants/assets.dart';
+import 'package:sikka_wallet/core/data/network/firebase/remote_config_service.dart';
 import 'package:sikka_wallet/core/widgets/custom_app_bar_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/presentation/feed/news_feed_screen.dart';
@@ -22,6 +23,7 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   final PostStore postStore = getIt<PostStore>();
   final UserStore userStore = getIt<UserStore>();
+  final RemoteConfigService _remoteConfigService = RemoteConfigService();
 
 //todo save invite code in sharefpres
   //todp impl profile screen
@@ -29,8 +31,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void initState() {
     super.initState();
     userStore.getUserObject();
+   // _initializeRemoteConfig();
   }
 
+  Future<void> _initializeRemoteConfig() async {
+    await _remoteConfigService.initialize();
+    setState(() {}); // Update UI after fetching values
+  }
   final List<Widget> _screens = [
     HomeScreen(),
     GamesScreen(),
@@ -42,6 +49,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void _onItemTapped(int index) {
     setState(() {
       postStore.updateIndex(index);
+      print("BlackListVersion: ${_remoteConfigService.blackListVersion}");
+      print("IsForceUpdate: ${_remoteConfigService.isForceUpdate}");
+      print("ShibaInuConversion: ${_remoteConfigService.shibaInuConversionValue}");
+      print("SikkaXConversion: ${_remoteConfigService.sikkaXConversionValue}");
+      print("SikkaWalletVersion: ${_remoteConfigService.sikkaWalletVersion}");
     });
   }
 

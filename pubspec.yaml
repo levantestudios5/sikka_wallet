@@ -86,6 +86,8 @@ dependencies:
   marquee: ^2.2.3
   flutter_local_notifications: ^19.0.0
   dropdown_search: ^6.0.2
+  firebase_core: ^3.12.1
+  firebase_remote_config: ^5.4.2
 
 
 dev_dependencies:

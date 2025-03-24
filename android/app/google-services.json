@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "473318854748",
+    "project_id": "sikkax-wallet",
+    "storage_bucket": "sikkax-wallet.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473318854748:android:b0a9d861e4ef7101ee9699",
+        "android_client_info": {
+          "package_name": "com.sikkax.wallet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT1yYxJHipI_j-M6ScQBxNSf6Ba489ywA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
