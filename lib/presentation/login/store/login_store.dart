@@ -3,12 +3,13 @@ import 'package:sikka_wallet/core/stores/form/form_store.dart';
 import 'package:sikka_wallet/domain/entity/auth/authentication_response.dart';
 import 'package:sikka_wallet/domain/entity/auth/register_request.dart';
 import 'package:sikka_wallet/domain/usecase/auth/register_user_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/user/get_user_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/is_logged_in_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/user/remove_auth_token_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/save_auth_token_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/save_login_in_status_usecase.dart';
 import 'package:mobx/mobx.dart';
-
-import '../../../domain/entity/user/user.dart';
+import 'package:sikka_wallet/domain/usecase/user/save_user_usecase.dart';
 import '../../../domain/usecase/user/login_usecase.dart';
 
 part 'login_store.g.dart';
@@ -21,6 +22,9 @@ abstract class _UserStore with Store {
     this._isLoggedInUseCase,
     this._saveLoginStatusUseCase,
     this._saveAuthTokenUseCase,
+    this._removeAuthTokenUseCase,
+    this._saveUserUseCase,
+    this._getUserUseCase,
     this._loginUseCase,
     this.formErrorStore,
     this.errorStore,
@@ -39,8 +43,11 @@ abstract class _UserStore with Store {
   final IsLoggedInUseCase _isLoggedInUseCase;
   final SaveLoginStatusUseCase _saveLoginStatusUseCase;
   final SaveAuthTokenUseCase _saveAuthTokenUseCase;
+  final RemoveAuthTokenUseCase _removeAuthTokenUseCase;
   final LoginUseCase _loginUseCase;
   final RegisterUserUseCase _registerUserUseCase;
+  final SaveUserUseCase _saveUserUseCase;
+  final GetUserUseCase _getUserUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -69,6 +76,9 @@ abstract class _UserStore with Store {
 
   @observable
   bool success = false;
+
+  @observable
+  User? currentUser = User();
 
   @observable
   ObservableFuture<LoginResponse?> loginFuture = emptyLoginResponse;
@@ -115,10 +125,13 @@ abstract class _UserStore with Store {
     await future.then((value) async {
       if (value != null) {
         await _saveLoginStatusUseCase.call(params: true);
-        await _saveAuthTokenUseCase.call(params: value.token);
+        await _saveUserUseCase.call(params: value.user ?? User());
+        await _saveAuthTokenUseCase.call(params: value.token!);
         this.isLoggedIn = true;
         this.success = true;
+        getUserObject();
       }
+
     }).catchError((e) {
       print(e);
       this.isLoggedIn = false;
@@ -127,8 +140,14 @@ abstract class _UserStore with Store {
     });
   }
 
+  @action
+ void getUserObject() async =>
+      currentUser = await _getUserUseCase.call(params: null);
+
+  @action
   logout() async {
     this.isLoggedIn = false;
+    this._removeAuthTokenUseCase.call(params: false);
     await _saveLoginStatusUseCase.call(params: false);
   }
 

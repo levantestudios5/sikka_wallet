@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../domain/entity/auth/authentication_response.dart';
 import 'constants/preferences.dart';
 
 class SharedPreferenceHelper {
@@ -49,5 +51,19 @@ class SharedPreferenceHelper {
 
   Future<void> changeLanguage(String language) {
     return _sharedPreference.setString(Preferences.current_language, language);
+  }
+
+  Future<void> saveUser(User user) async {
+    await _sharedPreference.setString(
+        Preferences.user, jsonEncode(user.toJson()));
+  }
+
+  Future<User?> getUser() async {
+    String? userJson = _sharedPreference.getString(Preferences.user);
+    if (userJson != null) {
+      return User.fromJson(
+          jsonDecode(userJson)); // Convert JSON string back to User object
+    } else
+      return null; // Return null if no user data is stored
   }
 }

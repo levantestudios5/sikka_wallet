@@ -55,6 +55,7 @@ dependencies:
   # String validation and sanitization for Dart. Dart 2-compatible version of validator
   validators: ^3.0.0
 
+
   # A powerful Http client for Dart
   dio: ">=4.0.0 <6.0.0"
 
@@ -84,6 +85,7 @@ dependencies:
   local_auth: ^2.3.0
   marquee: ^2.2.3
   flutter_local_notifications: ^19.0.0
+  dropdown_search: ^6.0.2
 
 
 dev_dependencies:
@@ -106,7 +108,7 @@ dev_dependencies:
 
 
 flutter_icons:
-  image_path: "assets/icons/ic_launcher.png"
+  image_path: "assets/icons/sikka.png"
   android: true
   ios: true
   # The "flutter_lints" package below contains a set of recommended lints to

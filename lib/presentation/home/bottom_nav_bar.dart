@@ -7,6 +7,7 @@ import 'package:sikka_wallet/presentation/feed/news_feed_screen.dart';
 import 'package:sikka_wallet/presentation/game/game_screen.dart';
 import 'package:sikka_wallet/presentation/home/dashboard.dart';
 import 'package:sikka_wallet/presentation/home/profile_screen.dart';
+import 'package:sikka_wallet/presentation/login/store/login_store.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
 import 'package:sikka_wallet/presentation/rank/rank_screen.dart';
 import 'package:sikka_wallet/presentation/wallet/wallet_screen.dart';
@@ -20,12 +21,14 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   final PostStore postStore = getIt<PostStore>();
+  final UserStore userStore = getIt<UserStore>();
 
 //todo save invite code in sharefpres
   //todp impl profile screen
   @override
   void initState() {
     super.initState();
+    userStore.getUserObject();
   }
 
   final List<Widget> _screens = [
@@ -61,8 +64,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
         return BottomNavigationBar(
           currentIndex: postStore.selectedIndex,
           onTap: _onItemTapped,
-          selectedItemColor: Colors.purple,
+          selectedItemColor: Colors.deepPurple,
           unselectedItemColor: Colors.grey,
+          selectedLabelStyle: TextStyle(
+            fontSize: 15, // Adjust font size
+            fontWeight: FontWeight.bold, // Make selected item bold
+          ),
+          unselectedLabelStyle: TextStyle(
+            fontSize: 12, // Smaller font size for unselected items
+            fontWeight: FontWeight.normal,
+          ),
           items: [
             BottomNavigationBarItem(
                 icon: Image.asset(

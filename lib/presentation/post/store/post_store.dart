@@ -171,6 +171,7 @@ abstract class _PostStore with Store {
     final future = _getWalletBalanceUseCase.call(params: null);
     fetchWalletFuture = ObservableFuture(future);
     future.then((walletData) {
+      print("WalletData ${walletData.toString()}");
       this.walletData = walletData;
       this.coinsList = walletData.getCoinList();
     }).catchError((error) {

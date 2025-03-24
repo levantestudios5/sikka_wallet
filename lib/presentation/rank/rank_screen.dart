@@ -6,6 +6,7 @@ import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
+import 'package:sikka_wallet/presentation/login/store/login_store.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
 
 class RanksScreen extends StatefulWidget {
@@ -15,6 +16,7 @@ class RanksScreen extends StatefulWidget {
 
 class _RanksScreenState extends State<RanksScreen> {
   final PostStore postStore = getIt<PostStore>();
+  final UserStore userStore = getIt<UserStore>();
 
   @override
   void initState() {
@@ -202,7 +204,7 @@ class _RanksScreenState extends State<RanksScreen> {
                   child: Row(
                     children: [
                       Text(
-                        'SikkaX1213',
+                        userStore.currentUser?.inviteCode ?? "",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 13.5,
@@ -211,7 +213,9 @@ class _RanksScreenState extends State<RanksScreen> {
                       Spacer(),
                       InkWell(
                           onTap: () {
-                            copyToClipboard('textToCopy');
+                            copyToClipboard(
+                              userStore.currentUser?.inviteCode ?? "",
+                            );
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("Copied to clipboard!")),
                             );

@@ -81,7 +81,7 @@ class _ConversionScreenState extends State<ConversionScreen> {
                             context,
                             sikxController,
                             "sikx_points",
-                            "${postStore.walletData?.sikkaXPoints}",
+                            "${postStore.walletData?.sikkaXPoints ?? 0}",
                             sikxError,
                             true)),
                     _buildSwapIcon(),
@@ -157,7 +157,7 @@ class _ConversionScreenState extends State<ConversionScreen> {
         Divider(thickness: 1, color: Colors.grey[300]),
         if (availableAmount.isNotEmpty)
           Text(
-            "${AppLocalizations.of(context).translate('available')} $availableAmount",
+            "${AppLocalizations.of(context).translate('available')} ${availableAmount ?? 0}",
             style: TextStyle(color: Colors.grey[600], fontSize: 14),
           ),
       ],

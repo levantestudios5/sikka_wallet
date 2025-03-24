@@ -12,10 +12,10 @@
 import 'dart:convert';
 
 class LoginResponse {
-  final String token;
-  final User user;
+  final String? token;
+  final User? user;
 
-  LoginResponse({required this.token, required this.user});
+  LoginResponse({ this.token,  this.user});
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     return LoginResponse(
@@ -27,7 +27,7 @@ class LoginResponse {
   Map<String, dynamic> toJson() {
     return {
       'token': token,
-      'user': user.toJson(),
+      'user': user?.toJson(),
     };
   }
 
@@ -37,28 +37,28 @@ class LoginResponse {
 }
 
 class User {
-  final String id;
-  final String fullName;
-  final String country;
-  final String email;
-  final String inviteCode;
-  final bool isEmailVerified;
+  final String? id;
+  final String? fullName;
+  final String? country;
+  final String? email;
+  final String? inviteCode;
+  final bool? isEmailVerified;
   final String? referredBy;
-  final bool isActive;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final bool? isActive;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   User({
-    required this.id,
-    required this.fullName,
-    required this.country,
-    required this.email,
-    required this.inviteCode,
-    required this.isEmailVerified,
+     this.id,
+     this.fullName,
+     this.country,
+     this.email,
+     this.inviteCode,
+     this.isEmailVerified,
     this.referredBy,
-    required this.isActive,
-    required this.createdAt,
-    required this.updatedAt,
+     this.isActive,
+     this.createdAt,
+     this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -86,8 +86,8 @@ class User {
       'isEmailVerified': isEmailVerified,
       'referredBy': referredBy,
       'isActive': isActive,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 }

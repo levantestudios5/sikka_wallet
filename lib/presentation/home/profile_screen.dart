@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/presentation/login/store/login_store.dart';
+import 'package:sikka_wallet/presentation/registration/signin_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final UserStore userStore = getIt<UserStore>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,14 +32,17 @@ class ProfileScreen extends StatelessWidget {
           CircleAvatar(
             radius: 50,
             backgroundColor: Colors.blue,
-            child: Text(
-              "SD",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            child: Observer(builder: (context) {
+              userStore.currentUser;
+              return Text(
+                getInitials(userStore.currentUser?.fullName ?? ""),
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              );
+            }),
           ),
           const SizedBox(height: 16),
           // Profile Info Card
@@ -50,23 +64,31 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ProfileInfoTile(
-                    label: "Name",
-                    value: "Sheikh Daniyal",
-                    shouldShowDivider: true,
-                  ),
-                  ProfileInfoTile(
-                      label: "Email Address",
-                      value: "example@email.com",
-                      shouldShowDivider: true),
+                  Observer(builder: (context) {
+                    userStore.currentUser;
+                    return ProfileInfoTile(
+                      label: "Name",
+                      value: userStore.currentUser?.fullName ?? "",
+                      shouldShowDivider: true,
+                    );
+                  }),
+                  Observer(builder: (context) {
+                    userStore.currentUser;
+                    return ProfileInfoTile(
+                        label: "Email Address",
+                        value: userStore.currentUser?.email ?? "",
+                        shouldShowDivider: true);
+                  }),
                   ProfileInfoTile(
                       label: "Password",
                       value: "****************",
                       shouldShowDivider: true),
-                  ProfileInfoTile(
-                      label: "Country",
-                      value: "Pakistan",
-                      shouldShowDivider: false),
+                  Observer(builder: (context) {
+                    return ProfileInfoTile(
+                        label: "Country",
+                        value: userStore.currentUser?.country ?? "",
+                        shouldShowDivider: false);
+                  }),
                 ],
               ),
             ),
@@ -86,7 +108,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // Handle logout
+                  userStore.logout();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (Route<dynamic> route) =>
+                        false, // Removes all previous routes
+                  );
                 },
                 child: Text(
                   "Logout",
@@ -101,6 +129,15 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String getInitials(String fullName) {
+    List<String> names = fullName.split(" ");
+    if (names.length < 2)
+      return names.first
+          .substring(0, 1)
+          .toUpperCase(); // Handle single-word names
+    return "${names.first[0].toUpperCase()}${names.last[0].toUpperCase()}";
   }
 }
 

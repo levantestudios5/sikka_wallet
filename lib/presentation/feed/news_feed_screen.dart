@@ -41,35 +41,34 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                       top: Radius.circular(Dimens.cardRadius),
                     ),
                   ),
-                  child:
-                  (postStore.postList?.posts?.length??0)>0?
-
-                  ListView.builder(
-                    padding: EdgeInsets.all(Dimens.paddingMedium),
-                    itemCount: postStore.postList?.posts?.length,
-                    itemBuilder: (context, index) {
-                      return _buildFeedCard(postStore.postList?.posts?[index]);
-                    },
-                  ):
-
-            Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    Assets.feedIcon,
-                    height: 250,
-                    color: Colors.grey
-                    ,
-                  ),
-                  Text("We have no feed to show you at this time\nStay Tuned for more updates!",
-                  textAlign: TextAlign.center,
-                    style: AppThemeData.buttonTextStyle.copyWith(color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
+                  child: (postStore.postList?.posts?.length ?? 0) > 0
+                      ? ListView.builder(
+                          padding: EdgeInsets.all(Dimens.paddingMedium),
+                          itemCount: postStore.postList?.posts?.length,
+                          itemBuilder: (context, index) {
+                            return _buildFeedCard(
+                                postStore.postList?.posts?[index]);
+                          },
+                        )
+                      : Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                Assets.feedIcon,
+                                height: 250,
+                                color: Colors.grey,
+                              ),
+                              Text(
+                                "We have no feed to show you at this time\nStay Tuned for more updates!",
+                                textAlign: TextAlign.center,
+                                style: AppThemeData.buttonTextStyle
+                                    .copyWith(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
                 );
         }));
   }
@@ -80,21 +79,22 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.cardRadiusNewsFeed),
       ),
-      elevation: Dimens.cardElevationNewsFeed,
+      elevation: 0,
       child: Padding(
         padding: EdgeInsets.all(Dimens.paddingMedium),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              DeviceUtils.formatDate(news?.createdAt??DateTime.now()), // Format date
+              DeviceUtils.formatDate(news?.createdAt ?? DateTime.now()),
+              // Format date
               style: AppThemeData.subtitle1,
             ),
             SizedBox(height: Dimens.paddingSmall),
             ClipRRect(
               borderRadius: BorderRadius.circular(Dimens.cardRadius),
               child: Image.network(
-                news?.imageUrl??"",
+                news?.imageUrl ?? "",
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 150,
@@ -104,12 +104,12 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
             ),
             SizedBox(height: Dimens.paddingSmall),
             Text(
-              news?.title??"",
+              news?.title ?? "",
               style: AppThemeData.headline2,
             ),
             SizedBox(height: Dimens.paddingSmall),
             Text(
-              news?.content??"",
+              news?.content ?? "",
               style: AppThemeData.bodyText,
             ),
           ],

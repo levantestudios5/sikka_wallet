@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/assets.dart';
@@ -18,13 +21,48 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
-  String countryCode = 'USA';
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _inviteCodeController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final UserStore _userStore = getIt<UserStore>();
+
+  List<DropdownMenuItem<String>> countryItems = [];
+  String? selectedCountry;
+
+  Future<void> loadCountries() async {
+    try {
+      String data = await rootBundle.loadString('assets/json/countries.json');
+      Map<String, dynamic> jsonData = jsonDecode(data);
+
+      List<dynamic> countriesList = jsonData['countries'];
+
+      setState(() {
+        countryItems = countriesList
+            .map<DropdownMenuItem<String>>(
+                (country) => DropdownMenuItem<String>(
+                      value: country['name'].toString(),
+                      child: Text(
+                        country['name'].toString(),
+                        style: AppThemeData.subtitleStyle.copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12),
+                      ),
+                    ))
+            .toList();
+      });
+    } catch (e) {
+      debugPrint("Error loading countries: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadCountries();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -254,16 +292,8 @@ class _SignupScreenState extends State<SignupScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: Dimens.inputSpacing),
       child: DropdownButtonFormField<String>(
-        items: ['USA', 'UK', 'India', 'Germany']
-            .map((country) => DropdownMenuItem(
-                  value: country,
-                  child: Text(
-                    country,
-                    style: AppThemeData.subtitleStyle
-                        .copyWith(color: Colors.black),
-                  ),
-                ))
-            .toList(),
+        items: countryItems,
+        value: selectedCountry,
         hint: Text(
           AppLocalizations.of(context).translate('country'),
           style: AppThemeData.subtitleStyle.copyWith(color: Colors.black54),
@@ -285,7 +315,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ),
         onChanged: (value) {
-          countryCode = value ?? "USA";
+          selectedCountry = value;
         },
       ),
     );
@@ -325,7 +355,6 @@ class _SignupScreenState extends State<SignupScreen> {
           child: ElevatedButton(
             onPressed: () {
               Navigator.pushReplacementNamed(context, Routes.login);
-
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
@@ -350,19 +379,27 @@ class _SignupScreenState extends State<SignupScreen> {
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
       Future.delayed(Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          FlushbarHelper.createError(
+        if (message.isNotEmpty &&
+            !message.contains('Registration successful')) {
+          FlushbarHelper.createInformation(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: AppLocalizations.of(context).translate('register'),
             duration: Duration(seconds: 3),
           )..show(context);
+        } else if (message.isNotEmpty &&
+            message.contains('Registration successful')) {
+          FlushbarHelper.createSuccess(
+            message: message,
+            title: AppLocalizations.of(context).translate('register'),
+            duration: Duration(seconds: 3),
+          )..show(context);
+          Navigator.pushReplacementNamed(context, Routes.login);
         }
       });
     }
 
     return SizedBox.shrink();
   }
-
 
   void showSignUpPopup(BuildContext context) {
     showDialog(
@@ -378,11 +415,10 @@ class _SignupScreenState extends State<SignupScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(Assets.appLogo,
-                    width: Dimens.iconSizeLarge),
+                Image.asset(Assets.appLogo, height: 100),
                 SizedBox(height: Dimens.appBarFontSize),
                 Text(
-                  AppLocalizations.of(context).translate('withdrawal_pending'),
+                  AppLocalizations.of(context).translate('before_proceeding'),
                   style: TextStyle(
                       fontSize: Dimens.titleSize, fontWeight: FontWeight.bold),
                 ),
@@ -407,13 +443,14 @@ class _SignupScreenState extends State<SignupScreen> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () async {
+          Navigator.of(context).pop();
           if (_formKey.currentState!.validate()) {
             String response = await _userStore.registerUser(
                 _nameController.text.trim(),
                 _emailController.text.trim(),
                 _passwordController.text.trim(),
                 _inviteCodeController.text.trim(),
-                countryCode);
+                selectedCountry ?? 'USA');
             _showErrorMessage(response);
           }
         },

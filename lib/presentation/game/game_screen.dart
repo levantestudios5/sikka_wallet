@@ -29,14 +29,16 @@ class _GamesScreenState extends State<GamesScreen> {
         ),
         child: Observer(builder: (context) {
           return (postStore.gameList?.posts?.length ?? 0) > 0
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildGameGrid(),
-                    _buildDetailWidget(),
-                  ],
-                )
+              ? SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildGameGrid(),
+                      _buildDetailWidget(),
+                    ],
+                  ),
+              )
               : Center(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),

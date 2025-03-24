@@ -72,6 +72,25 @@ class WalletData {
       "updatedAt": updatedAt?.toIso8601String(),
     };
   }
+  @override
+  String toString() {
+    return 'WalletData('
+        'id: $id, '
+        'sikkaXPoints: $sikkaXPoints, '
+        'sikkaXCoin: $sikkaXCoin, '
+        'shibaInu: $shibaInu, '
+        'pendingPoints: $pendingPoints, '
+        'userId: $userId, '
+        'ftxCoin: $ftxCoin, '
+        'bnbCoin: $bnbCoin, '
+        'batCoin: $batCoin, '
+        'polkadotCoin: $polkadotCoin, '
+        'neoCoin: $neoCoin, '
+        'dodgeCoin: $dodgeCoin, '
+        'createdAt: ${createdAt?.toIso8601String()}, '
+        'updatedAt: ${updatedAt?.toIso8601String()}'
+        ')';
+  }
 
   /// **Method to get a list of coins separately**
   List<Map<String, String>> getCoinList() {

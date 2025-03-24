@@ -4,8 +4,6 @@ import 'package:sikka_wallet/data/network/apis/auth/auth_api.dart';
 import 'package:sikka_wallet/domain/entity/auth/authentication_response.dart';
 import 'package:sikka_wallet/domain/repository/user/user_repository.dart';
 import 'package:sikka_wallet/data/sharedpref/shared_preference_helper.dart';
-
-import '../../../domain/entity/user/user.dart';
 import '../../../domain/usecase/user/login_usecase.dart';
 
 class UserRepositoryImpl extends UserRepository {
@@ -33,7 +31,17 @@ class UserRepositoryImpl extends UserRepository {
   @override
   Future<bool> get isLoggedIn => _sharedPrefsHelper.isLoggedIn;
 
+  @override
+  Future<void> saveToken(String value) =>
+      _sharedPrefsHelper.saveAuthToken(value);
 
   @override
-  Future<void> saveToken(String value) => _sharedPrefsHelper.saveAuthToken(value);
+  Future<bool> removeAuthToken() async =>
+      await _sharedPrefsHelper.removeAuthToken();
+
+  @override
+  Future<User?> getUser() async => await _sharedPrefsHelper.getUser();
+
+  @override
+  Future<void> saveUser(User user) => _sharedPrefsHelper.saveUser(user);
 }

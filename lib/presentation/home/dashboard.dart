@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 import 'package:sikka_wallet/constants/app_theme.dart';
 import 'package:sikka_wallet/constants/assets.dart';
-import 'package:sikka_wallet/constants/colors.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
-import 'package:sikka_wallet/core/widgets/custom_circular_button.dart';
 import 'package:sikka_wallet/core/widgets/game_card.dart';
 import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/domain/entity/leaderboard/leaderboard.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/presentation/home/bottom_nav_bar.dart';
+import 'package:sikka_wallet/presentation/login/store/login_store.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
-import 'package:sikka_wallet/presentation/rank/rank_screen.dart';
 import 'package:sikka_wallet/utils/device/device_utils.dart';
 import 'package:sikka_wallet/utils/routes/routes.dart';
 
@@ -25,9 +22,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final PostStore postStore = getIt<PostStore>();
+  final UserStore userStore = getIt<UserStore>();
 
   @override
   void initState() {
+    userStore.getUserObject();
     postStore.getWalletData();
     postStore.getAllGames();
     postStore.getLeaderBoard();
@@ -75,8 +74,20 @@ class _HomeScreenState extends State<HomeScreen> {
           Observer(builder: (context) {
             return Text(postStore.walletData?.sikkaXPoints.toString() ?? "0.0",
                 style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 54,
+                    shadows: <Shadow>[
+                      Shadow(
+                        offset: Offset(2.0, 2.0),
+                        blurRadius: 3.0,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                      Shadow(
+                        offset: Offset(2.0, 2.0),
+                        blurRadius: 8.0,
+                        color: Colors.grey.shade800,
+                      ),
+                    ],
+                    fontWeight: FontWeight.w900,
                     color: Colors.white));
           }),
           Text(context.translate("sikka_points"),
@@ -262,10 +273,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-          SizedBox(
-            height: 16,
-          ),
-          _buildReferralCard(),
+          (postStore.leaderBoardEntryList?.posts?.length ?? 0) > 0
+              ? SizedBox(
+                  height: 16,
+                )
+              : SizedBox(),
+          (postStore.leaderBoardEntryList?.posts?.length ?? 0) > 0
+              ? _buildReferralCard()
+              : SizedBox(),
         ],
       ),
     );
@@ -418,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     children: [
                       Text(
-                        'SikkaX1213',
+                        userStore.currentUser?.inviteCode ?? "",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 13.5,
@@ -427,7 +442,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Spacer(),
                       InkWell(
                           onTap: () {
-                            copyToClipboard('textToCopy');
+                            copyToClipboard(
+                              userStore.currentUser?.inviteCode ?? "",
+                            );
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("Copied to clipboard!")),
                             );

@@ -1,4 +1,4 @@
-package com.example.sikka_wallet
+package com.sikkax.wallet
 
 import io.flutter.embedding.android.FlutterActivity
 
