@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/constants/strings.dart';
+import 'package:sikka_wallet/core/data/network/firebase/remote_config_service.dart';
 import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet_conversion_request.dart';
@@ -18,6 +19,7 @@ class ExchangeScreen extends StatefulWidget {
 class _ExchangeScreenState extends State<ExchangeScreen> {
   final PostStore postStore = getIt<PostStore>();
   TextEditingController sikxController = TextEditingController(text: "1.00");
+  final RemoteConfigService _remoteConfigService = RemoteConfigService();
   TextEditingController shibController = TextEditingController(text: "0.00");
   String? sikxError;
   String? shibError;
@@ -33,10 +35,12 @@ class _ExchangeScreenState extends State<ExchangeScreen> {
       sikxError = null;
     }
     if (isSikxChanged) {
-      shibValue = sikxValue / 1;
+      print("ShibbaConversionValue: ${_remoteConfigService.shibaInuConversionValue}");
+      shibValue = sikxValue / num.parse(_remoteConfigService.shibaInuConversionValue.toString()) ??1;
       shibController.text = shibValue.toStringAsFixed(2);
     }
     setState(() {});
+
   }
 
   @override

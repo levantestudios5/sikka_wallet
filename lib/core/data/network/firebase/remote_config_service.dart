@@ -1,7 +1,10 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:sikka_wallet/di/service_locator.dart';
+import 'package:sikka_wallet/presentation/login/store/login_store.dart';
 
 class RemoteConfigService {
   final FirebaseRemoteConfig _remoteConfig = FirebaseRemoteConfig.instance;
+  final UserStore userStore = getIt<UserStore>();
 
   Future<void> initialize() async {
     print("We are coming into here");
@@ -13,11 +16,11 @@ class RemoteConfigService {
     );
 
     await _remoteConfig.setDefaults(const {
-      'blacklist_version': 100,
+      'blacklist_version': '',
       'is_force_update': false,
-      'shiba_inu_conversion_value': 100,
-      'sikka_coin_conversion_value': 100,
-      'sikkax_wallet_version': 100
+      'shiba_inu_conversion_value': 0,
+      'sikka_coin_conversion_value': 0,
+      'sikkax_wallet_version': 0
     });
 
     await fetchRemoteConfig();
@@ -32,7 +35,7 @@ class RemoteConfigService {
     try {
       await _remoteConfig.fetchAndActivate(); // Fetch new values
       print("Remote Config fetched successfully!");
-      print("BlackListVersion ${_remoteConfig.getInt('blacklist_version')}");
+      print("BlackListVersion ${_remoteConfig.getString('blacklist_version')}");
       showAllValues();
     } catch (e) {
       print("Remote Config fetch failed: $e");
@@ -43,15 +46,15 @@ class RemoteConfigService {
     await _remoteConfig.fetchAndActivate();
   }
 
-  int? get blackListVersion => _remoteConfig.getInt('blacklist_version');
+  String? get blackListVersion => _remoteConfig.getString('blacklist_version');
 
   bool get isForceUpdate => _remoteConfig.getBool('is_force_update');
 
-  int? get shibaInuConversionValue =>
-      _remoteConfig.getInt('shiba_inu_conversion_value');
+  double? get shibaInuConversionValue =>
+      _remoteConfig.getDouble('shiba_inu_conversion_value');
 
-  int? get sikkaXConversionValue =>
-      _remoteConfig.getInt('sikka_coin_conversion_value');
+  double? get sikkaXConversionValue =>
+      _remoteConfig.getDouble('sikka_coin_conversion_value');
 
   int? get sikkaWalletVersion =>
       _remoteConfig.getInt('sikkax_wallet_version');

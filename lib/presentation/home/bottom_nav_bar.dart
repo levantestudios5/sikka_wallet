@@ -23,22 +23,22 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   final PostStore postStore = getIt<PostStore>();
   final UserStore userStore = getIt<UserStore>();
-  //final RemoteConfigService _remoteConfigService = RemoteConfigService();
+ final RemoteConfigService _remoteConfigService = RemoteConfigService();
 
 //todo save invite code in sharefpres
   //todp impl profile screen
   @override
   void initState() {
-  //  _initializeRemoteConfig();
+    _initializeRemoteConfig();
     super.initState();
     userStore.getUserObject();
   }
 
-  // Future<void> _initializeRemoteConfig() async {
-  //   print("Initalizing remote config");
-  //   await _remoteConfigService.initialize();
-  //   setState(() {}); // Update UI after fetching values
-  // }
+  Future<void> _initializeRemoteConfig() async {
+    print("Initalizing remote config");
+    await _remoteConfigService.initialize();
+    setState(() {}); // Update UI after fetching values
+  }
   final List<Widget> _screens = [
     HomeScreen(),
     GamesScreen(),
@@ -50,11 +50,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void _onItemTapped(int index) {
     setState(() {
       postStore.updateIndex(index);
-      // print("BlackListVersion: ${_remoteConfigService.blackListVersion}");
-      // print("IsForceUpdate: ${_remoteConfigService.isForceUpdate}");
-      // print("ShibaInuConversion: ${_remoteConfigService.shibaInuConversionValue}");
-      // print("SikkaXConversion: ${_remoteConfigService.sikkaXConversionValue}");
-      // print("SikkaWalletVersion: ${_remoteConfigService.sikkaWalletVersion}");
+      print("BlackListVersion: ${_remoteConfigService.blackListVersion}");
+      print("IsForceUpdate: ${_remoteConfigService.isForceUpdate}");
+      print("ShibaInuConversion: ${_remoteConfigService.shibaInuConversionValue}");
+      print("SikkaXConversion: ${_remoteConfigService.sikkaXConversionValue}");
+      print("SikkaWalletVersion: ${_remoteConfigService.sikkaWalletVersion}");
     });
   }
 

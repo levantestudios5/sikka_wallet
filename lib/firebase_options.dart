@@ -50,11 +50,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAnipgHZrZoXZ31ajyJnlhr-uRHD5sMuLc',
-    appId: '1:826109060249:android:2b6666fc20a464e28c4408',
-    messagingSenderId: '826109060249',
-    projectId: 'toola-367a9',
-    storageBucket: 'toola-367a9.appspot.com',
+    apiKey: 'AIzaSyAT1yYxJHipI_j-M6ScQBxNSf6Ba489ywA',
+    appId: '1:473318854748:android:b0a9d861e4ef7101ee9699',
+    messagingSenderId: '473318854748',
+    projectId: 'sikkax-wallet',
+    storageBucket: 'sikkax-wallet.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

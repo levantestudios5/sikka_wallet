@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/constants/strings.dart';
+import 'package:sikka_wallet/core/data/network/firebase/remote_config_service.dart';
 import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/domain/entity/wallet/wallet_conversion_request.dart';
@@ -18,6 +19,8 @@ class ConversionScreen extends StatefulWidget {
 class _ConversionScreenState extends State<ConversionScreen> {
   final PostStore postStore = getIt<PostStore>();
   TextEditingController sikxController = TextEditingController(text: "1.00");
+  final RemoteConfigService _remoteConfigService = RemoteConfigService();
+
   TextEditingController sikaPointController =
       TextEditingController(text: "0.00");
   String? sikxError;
@@ -34,7 +37,8 @@ class _ConversionScreenState extends State<ConversionScreen> {
       sikxError = null;
     }
     if (isSikxChanged) {
-      shibValue = sikxValue / 1;
+      print("SikkaXConversionValue: ${_remoteConfigService.sikkaXConversionValue}");
+      shibValue = sikxValue / num.parse(_remoteConfigService.sikkaXConversionValue.toString()) ??1;
       sikaPointController.text = shibValue.toStringAsFixed(2);
     }
     setState(() {});
