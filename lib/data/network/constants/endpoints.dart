@@ -12,6 +12,7 @@ class Endpoints {
 
   // booking endpoints
   static const String register = baseUrl + "/auth/register";
+  static const String resetPassword = baseUrl + "/auth/request-reset";
   static const String loginUser = baseUrl + "/auth/login";
   static const String getPosts = baseUrl + "/news";
   static const String getGames = baseUrl + "/game";

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sikka_wallet/constants/assets.dart';
 import 'package:sikka_wallet/core/data/network/firebase/remote_config_service.dart';
 import 'package:sikka_wallet/core/widgets/custom_app_bar_widget.dart';
@@ -23,7 +24,8 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   final PostStore postStore = getIt<PostStore>();
   final UserStore userStore = getIt<UserStore>();
- final RemoteConfigService _remoteConfigService = RemoteConfigService();
+  bool shouldShow = false;
+  final RemoteConfigService _remoteConfigService = RemoteConfigService();
 
 //todo save invite code in sharefpres
   //todp impl profile screen
@@ -38,11 +40,22 @@ class _BottomNavBarState extends State<BottomNavBar> {
     print("Initalizing remote config");
     await _remoteConfigService.initialize();
     setState(() {}); // Update UI after fetching values
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
   }
+
   final List<Widget> _screens = [
     HomeScreen(),
     GamesScreen(),
     WalletScreen(),
+    RanksScreen(),
+    NewsFeedScreen(),
+  ];
+
+  final List<Widget> _screensX = [
+    HomeScreen(),
+    GamesScreen(),
     RanksScreen(),
     NewsFeedScreen(),
   ];
@@ -52,7 +65,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
       postStore.updateIndex(index);
       print("BlackListVersion: ${_remoteConfigService.blackListVersion}");
       print("IsForceUpdate: ${_remoteConfigService.isForceUpdate}");
-      print("ShibaInuConversion: ${_remoteConfigService.shibaInuConversionValue}");
+      print("shouldShowWallet: ${_remoteConfigService.shouldShowWallet}");
+      print(
+          "ShibaInuConversion: ${_remoteConfigService.shibaInuConversionValue}");
       print("SikkaXConversion: ${_remoteConfigService.sikkaXConversionValue}");
       print("SikkaWalletVersion: ${_remoteConfigService.sikkaWalletVersion}");
     });
@@ -70,7 +85,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
         },
       ),
       body: Observer(builder: (context) {
-        return IndexedStack(index: postStore.selectedIndex, children: _screens);
+        return IndexedStack(
+            index: postStore.selectedIndex,
+            children:
+                _remoteConfigService.shouldShowWallet ? _screens : _screensX);
       }),
       bottomNavigationBar: Observer(builder: (context) {
         postStore.selectedIndex;
@@ -108,16 +126,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   height: 18,
                 ),
                 label: context.translate("games")),
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  Assets.walletIcon,
-                  height: 18,
-                ),
-                activeIcon: Image.asset(
-                  Assets.walletIconSelected,
-                  height: 18,
-                ),
-                label: context.translate("wallet")),
+            if (_remoteConfigService.shouldShowWallet)
+              BottomNavigationBarItem(
+                  icon: Image.asset(
+                    Assets.walletIcon,
+                    height: 18,
+                  ),
+                  activeIcon: Image.asset(
+                    Assets.walletIconSelected,
+                    height: 18,
+                  ),
+                  label: context.translate("wallet")),
             BottomNavigationBarItem(
                 icon: Image.asset(
                   Assets.rankIcon,

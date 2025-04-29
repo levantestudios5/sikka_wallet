@@ -3,6 +3,7 @@ import 'package:sikka_wallet/core/stores/form/form_store.dart';
 import 'package:sikka_wallet/domain/entity/auth/authentication_response.dart';
 import 'package:sikka_wallet/domain/entity/auth/register_request.dart';
 import 'package:sikka_wallet/domain/usecase/auth/register_user_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/auth/reset_password_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/get_user_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/user/remove_auth_token_usecase.dart';
@@ -29,6 +30,7 @@ abstract class _UserStore with Store {
     this.formErrorStore,
     this.errorStore,
     this._registerUserUseCase,
+    this._resetPasswordUseCase,
   ) {
     // setting up disposers
     _setupDisposers();
@@ -48,6 +50,7 @@ abstract class _UserStore with Store {
   final RegisterUserUseCase _registerUserUseCase;
   final SaveUserUseCase _saveUserUseCase;
   final GetUserUseCase _getUserUseCase;
+  final ResetPasswordUseCase _resetPasswordUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -117,6 +120,21 @@ abstract class _UserStore with Store {
   }
 
   @action
+  Future<String> resetPassword(String email) async {
+    final future = _resetPasswordUseCase.call(params: email);
+    registerFuture = ObservableFuture(future);
+
+    return await future.then((value) async {
+      this.success = true;
+      return value; // Return the success message
+    }).catchError((e) {
+      print(e);
+      this.success = false;
+      throw e;
+    });
+  }
+
+  @action
   Future login(String email, String password) async {
     final LoginParams loginParams =
         LoginParams(email: email, password: password);
@@ -131,7 +149,6 @@ abstract class _UserStore with Store {
         this.success = true;
         getUserObject();
       }
-
     }).catchError((e) {
       print(e);
       this.isLoggedIn = false;
@@ -141,7 +158,7 @@ abstract class _UserStore with Store {
   }
 
   @action
- void getUserObject() async =>
+  void getUserObject() async =>
       currentUser = await _getUserUseCase.call(params: null);
 
   @action

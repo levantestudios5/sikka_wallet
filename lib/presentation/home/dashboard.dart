@@ -14,6 +14,7 @@ import 'package:sikka_wallet/presentation/login/store/login_store.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
 import 'package:sikka_wallet/utils/device/device_utils.dart';
 import 'package:sikka_wallet/utils/routes/routes.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -41,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Color(0xFFA455F8),
         body: Stack(
           children: [
-              Align(alignment: Alignment.topCenter, child: _buildHeader(context)),
+            Align(alignment: Alignment.topCenter, child: _buildHeader(context)),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: Observer(builder: (context) {
@@ -204,7 +205,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: 1,
                     physics: ScrollPhysics(),
                     itemBuilder: (context, index) {
-                      return _buildFeedCard(postStore.postList?.posts?[index]);
+                      return GestureDetector(
+                          onTap: () {
+                            _launchURL(postStore
+                                    .postList?.posts?[index].externalLink ??
+                                "");
+                          },
+                          child: _buildFeedCard(
+                              postStore.postList?.posts?[index]));
                     },
                   )
                 : Center(
@@ -349,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
           title: postStore.gameList!.posts![index].name,
           description: postStore.gameList!.posts![index].description,
           onPlayNow: () {
-            print("Play Now Clicked!");
+            _launchURL(postStore.gameList?.posts?[index].playstoreUrl ?? "");
           },
         );
       },
@@ -501,6 +509,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _launchURL(String url) async {
+    print("URL PASWORD $url");
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
   }
 
   void copyToClipboard(String text) {

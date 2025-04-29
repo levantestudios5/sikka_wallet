@@ -5,6 +5,7 @@ import 'package:sikka_wallet/constants/dimens.dart';
 import 'package:sikka_wallet/core/widgets/progress_indicator_widget.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/presentation/login/store/login_store.dart';
+import 'package:sikka_wallet/presentation/registration/forget_password_screen.dart';
 import 'package:sikka_wallet/utils/locale/app_localization.dart';
 import 'package:sikka_wallet/utils/routes/routes.dart';
 
@@ -107,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           const SizedBox(
                                               height: Dimens.textSpacing),
                                           _buildLoginButton(),
+                                          _buildForgotPasswordButton()
                                         ],
                                       ),
                                     ),
@@ -247,6 +249,31 @@ class _LoginScreenState extends State<LoginScreen> {
           style: AppThemeData.buttonTextStyle.copyWith(color: Colors.white),
         ),
       ),
+    );
+  }
+
+  Widget _buildForgotPasswordButton() {
+    return Align(
+      alignment: FractionalOffset.centerRight,
+      child: TextButton(
+        // padding: EdgeInsets.all(0.0),
+        child: Text(
+          AppLocalizations.of(context).translate('login_btn_forgot_password'),
+        ),
+        onPressed: () {
+          _showModalBottomSheet(context);
+        },
+      ),
+    );
+  }
+
+  void _showModalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return ResetPasswordScreen();
+      },
     );
   }
 

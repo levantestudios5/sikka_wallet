@@ -17,4 +17,11 @@ class AuthRepositoryImpl extends AuthRepository {
       return response; // The response contains the success message
     }).catchError((error) => throw error);
   }
+
+  @override
+  Future<String> resetPassword(String email) async {
+    return await _authApi.resetPassword(email).then((response) {
+      return response; // The response contains the success message
+    }).catchError((error) => throw error);
+  }
 }

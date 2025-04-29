@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:473318854748:android:e49825b4494cb60bee9699",
+        "android_client_info": {
+          "package_name": "com.sikkax.manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT1yYxJHipI_j-M6ScQBxNSf6Ba489ywA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:473318854748:android:b0a9d861e4ef7101ee9699",
         "android_client_info": {
           "package_name": "com.sikkax.wallet"

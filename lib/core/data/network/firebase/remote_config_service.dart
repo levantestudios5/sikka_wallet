@@ -18,6 +18,7 @@ class RemoteConfigService {
     await _remoteConfig.setDefaults(const {
       'blacklist_version': '',
       'is_force_update': false,
+      'show_wallet_ft': false,
       'shiba_inu_conversion_value': 0,
       'sikka_coin_conversion_value': 0,
       'sikkax_wallet_version': 0
@@ -49,6 +50,7 @@ class RemoteConfigService {
   String? get blackListVersion => _remoteConfig.getString('blacklist_version');
 
   bool get isForceUpdate => _remoteConfig.getBool('is_force_update');
+  bool get shouldShowWallet => _remoteConfig.getBool('show_wallet_ft');
 
   double? get shibaInuConversionValue =>
       _remoteConfig.getDouble('shiba_inu_conversion_value');

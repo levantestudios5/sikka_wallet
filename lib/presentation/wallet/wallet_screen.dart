@@ -118,7 +118,8 @@ class _WalletScreenState extends State<WalletScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(Assets.shiba, width: Dimens.coinSize),
+            coin['name'].toString().contains('Shiba')?   Image.asset(Assets.shiba, width: Dimens.coinSize):
+            Image.asset(Assets.appLogo, width: Dimens.coinSize),
             SizedBox(height: Dimens.spacingMedium),
             Text(
               "${double.parse(coin['amount']).toStringAsFixed(3)}",

@@ -41,6 +41,30 @@ class AuthApi {
     }
   }
 
+  Future<String> resetPassword(String email) async {
+    try {
+      final response = await _dioClient.dio.post(
+        Endpoints.resetPassword,
+        data: {
+          "email": email,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data["message"]; // Success message
+      } else {
+        throw Exception("Unexpected error occurred");
+      }
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data is Map<String, dynamic>) {
+        return e.response?.data["message"] ?? "An unknown error occurred";
+      }
+      return "An error occurred while processing your request";
+    } catch (e) {
+      return "Something went wrong. Please try again later.";
+    }
+  }
+
   Future<LoginResponse> authenticateUser(String email, String password) async {
     try {
       final response = await _dioClient.dio.post(

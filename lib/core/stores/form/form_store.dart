@@ -8,12 +8,12 @@ class FormStore = _FormStore with _$FormStore;
 
 abstract class _FormStore with Store {
   // store for handling form errors
-  final FormErrorStore formErrorStore;
+  final FormErrorStore formErrorStore = FormErrorStore();
 
   // store for handling error messages
-  final ErrorStore errorStore;
+  final ErrorStore errorStore = ErrorStore();
 
-  _FormStore(this.formErrorStore, this.errorStore) {
+  _FormStore() {
     _setupValidations();
   }
 
@@ -55,7 +55,6 @@ abstract class _FormStore with Store {
   @computed
   bool get canForgetPassword =>
       !formErrorStore.hasErrorInForgotPassword && userEmail.isNotEmpty;
-
   // actions:-------------------------------------------------------------------
   @action
   void setUserId(String value) {

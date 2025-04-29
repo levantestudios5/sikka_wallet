@@ -4,6 +4,7 @@ import 'package:sikka_wallet/core/stores/error/error_store.dart';
 import 'package:sikka_wallet/core/stores/form/form_store.dart';
 import 'package:sikka_wallet/domain/repository/setting/setting_repository.dart';
 import 'package:sikka_wallet/domain/usecase/auth/register_user_usecase.dart';
+import 'package:sikka_wallet/domain/usecase/auth/reset_password_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/game/get_all_games.dart';
 import 'package:sikka_wallet/domain/usecase/leaderboard/get_leaderboard_usecase.dart';
 import 'package:sikka_wallet/domain/usecase/post/get_post_usecase.dart';
@@ -30,7 +31,7 @@ class StoreModule {
     getIt.registerFactory(() => ErrorStore());
     getIt.registerFactory(() => FormErrorStore());
     getIt.registerFactory(
-      () => FormStore(getIt<FormErrorStore>(), getIt<ErrorStore>()),
+      () => FormStore(),
     );
 
     // stores:------------------------------------------------------------------
@@ -45,7 +46,8 @@ class StoreModule {
           getIt<LoginUseCase>(),
           getIt<FormErrorStore>(),
           getIt<ErrorStore>(),
-          getIt<RegisterUserUseCase>()),
+          getIt<RegisterUserUseCase>(),
+          getIt<ResetPasswordUseCase>()),
     );
 
     getIt.registerSingleton<PostStore>(

@@ -7,6 +7,7 @@ import 'package:sikka_wallet/core/widgets/game_card.dart';
 import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/domain/entity/game/game.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GamesScreen extends StatefulWidget {
   @override
@@ -30,7 +31,7 @@ class _GamesScreenState extends State<GamesScreen> {
         child: Observer(builder: (context) {
           return (postStore.gameList?.posts?.length ?? 0) > 0
               ? SingleChildScrollView(
-                child: Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -38,7 +39,7 @@ class _GamesScreenState extends State<GamesScreen> {
                       _buildDetailWidget(),
                     ],
                   ),
-              )
+                )
               : Center(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -79,12 +80,22 @@ class _GamesScreenState extends State<GamesScreen> {
             title: postStore.gameList!.posts![index].name,
             description: postStore.gameList!.posts![index].description,
             onPlayNow: () {
-              print("Play Now Clicked!");
+              _launchURL(
+                postStore.gameList!.posts![index].playstoreUrl,
+              );
             },
           );
         },
       ),
     );
+  }
+
+  Future<void> _launchURL(String url) async {
+    print("URL PASWORD $url");
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
   }
 
   Widget _buildDetailWidget() {

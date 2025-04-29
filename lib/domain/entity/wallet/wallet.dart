@@ -97,12 +97,12 @@ class WalletData {
     return [
       {"name": "SikkaX Game Coin", "amount": sikkaXCoin??""},
       {"name": "ShibaInu Game Coin", "amount": shibaInu.toString()??""},
-      {"name": "FTX Game Coin", "amount": ftxCoin??""},
-      {"name": "BNB Game Coin", "amount": bnbCoin??""},
-      {"name": "BAT Game Coin", "amount": batCoin??""},
-      {"name": "Polkadot Game Coin", "amount": polkadotCoin??""},
-      {"name": "NEO Game Coin", "amount": neoCoin??""},
-      {"name": "Dodge Game Coin", "amount": dodgeCoin??""},
+      // {"name": "FTX Game Coin", "amount": ftxCoin??""},
+      // {"name": "BNB Game Coin", "amount": bnbCoin??""},
+      // {"name": "BAT Game Coin", "amount": batCoin??""},
+      // {"name": "Polkadot Game Coin", "amount": polkadotCoin??""},
+      // {"name": "NEO Game Coin", "amount": neoCoin??""},
+      // {"name": "Dodge Game Coin", "amount": dodgeCoin??""},
     ];
   }
 }

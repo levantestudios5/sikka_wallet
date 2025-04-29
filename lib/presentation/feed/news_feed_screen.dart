@@ -10,6 +10,7 @@ import 'package:sikka_wallet/di/service_locator.dart';
 import 'package:sikka_wallet/domain/entity/news/news_feed.dart';
 import 'package:sikka_wallet/presentation/post/store/post_store.dart';
 import 'package:sikka_wallet/utils/device/device_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/app_theme.dart';
 
@@ -46,8 +47,15 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                           padding: EdgeInsets.all(Dimens.paddingMedium),
                           itemCount: postStore.postList?.posts?.length,
                           itemBuilder: (context, index) {
-                            return _buildFeedCard(
-                                postStore.postList?.posts?[index]);
+                            return GestureDetector(
+                              onTap: () async {
+                                await _launchURL(postStore
+                                        .postList?.posts?[index].externalLink ??
+                                    "");
+                              },
+                              child: _buildFeedCard(
+                                  postStore.postList?.posts?[index]),
+                            );
                           },
                         )
                       : Center(
@@ -116,5 +124,13 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _launchURL(String url) async {
+    print("URL PASWORD $url");
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
   }
 }
